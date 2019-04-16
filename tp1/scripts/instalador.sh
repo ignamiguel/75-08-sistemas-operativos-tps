@@ -30,7 +30,7 @@ configurarDirectorios(){
 	echo "Directorio de las Novedades Procesadas: $DIRECTORIO_NOV_PROCESADAS"
 	echo "Directorio de las Novedades Fallidos: $DIRECTORIO_FALLIDOS"
 	echo "Directorio de las Archivos Procesados: $DIRECTORIO_PROCESADOS"
-	echo "Directorio de las Archivos Procesados: $DIRECTORIO_SALIDA"
+	echo "Directorio de las Archivos de Salida: $DIRECTORIO_SALIDA"
 	echo '---------------------------------------------' 
 	echo
 
