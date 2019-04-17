@@ -11,13 +11,13 @@ configurarDirectorios(){
 	echo '---------------------------------------------' 
 	echo
 	#leer el dato del teclado y guardarlo en la variable de directorio correspondiente
-	read -p "Defina el directorio de Ejecutables: " DIRECTORIO_EJECUTABLES	
-	read -p "Defina el directorio de Archivos Maestros: " DIRECTORIO_MAESTROS	
-	read -p "Defina el directorio de Novedades: " DIRECTORIO_NOVEDADES	
-	read -p "Defina el directorio de Novedades Procesadas: " DIRECTORIO_NOV_PROCESADAS	
-	read -p "Defina el directorio de Novedades Fallidos: " DIRECTORIO_FALLIDOS	
-	read -p "Defina el directorio de Archivos Procesados: " DIRECTORIO_PROCESADOS	
-	read -p "Defina el directorio de Archivos de Salida: " DIRECTORIO_SALIDA	
+	read -p "Defina el directorio de Ejecutables: " DIRECTORIO_EJECUTABLES
+	read -p "Defina el directorio de Archivos Maestros: " DIRECTORIO_MAESTROS
+	read -p "Defina el directorio de Novedades: " DIRECTORIO_NOVEDADES
+	read -p "Defina el directorio de Novedades Aceptadas: " DIRECTORIO_ACEPTADOS
+	read -p "Defina el directorio de Novedades Rechazadas: " DIRECTORIO_RECHAZADOS
+	read -p "Defina el directorio de Novedades Procesadas: " DIRECTORIO_PROCESADOS
+	read -p "Defina el directorio de Archivos de Salida: " DIRECTORIO_SALIDA
 
 
 	echo 'Directorios definidos para la Instalación'
@@ -27,9 +27,9 @@ configurarDirectorios(){
 	echo "Directorio de Ejecutables: $DIRECTORIO_EJECUTABLES"
 	echo "Directorio de Archivos Maestros: $DIRECTORIO_MAESTROS"
 	echo "Directorio de las Novedades: $DIRECTORIO_NOVEDADES"
-	echo "Directorio de las Novedades Procesadas: $DIRECTORIO_NOV_PROCESADAS"
-	echo "Directorio de las Novedades Fallidos: $DIRECTORIO_FALLIDOS"
-	echo "Directorio de las Archivos Procesados: $DIRECTORIO_PROCESADOS"
+	echo "Directorio de las Novedades Aceptadas: $DIRECTORIO_ACEPTADOS"
+	echo "Directorio de las Novedades Rechazadas: $DIRECTORIO_RECHAZADOS"
+	echo "Directorio de las Novedades Procesadas: $DIRECTORIO_PROCESADOS"
 	echo "Directorio de las Archivos de Salida: $DIRECTORIO_SALIDA"
 	echo '---------------------------------------------' 
 	echo
@@ -42,6 +42,27 @@ configurarDirectorios(){
 		#Validar todos los datos
 		echo "Se instalo todo"
 		#Instalar
+		# Esto definitivamente se puede optimizar y hay que terminarlo,
+		# es solo algo rapido para dejar una instalacion medianamente 
+		# valida.
+		echo DIRECTORIO_EJECUTABLES=$DIRECTORIO_EJECUTABLES >> conf/tpconfig.txt
+		echo DIRECTORIO_MAESTROS=$DIRECTORIO_MAESTROS >> conf/tpconfig.txt
+		echo DIRECTORIO_NOVEDADES=$DIRECTORIO_NOVEDADES >> conf/tpconfig.txt
+		echo DIRECTORIO_ACEPTADOS=$DIRECTORIO_ACEPTADOS >> conf/tpconfig.txt
+		echo DIRECTORIO_RECHAZADOS=$DIRECTORIO_RECHAZADOS >> conf/tpconfig.txt
+		echo DIRECTORIO_PROCESADOS=$DIRECTORIO_PROCESADOS >> conf/tpconfig.txt
+		echo DIRECTORIO_SALIDA=$DIRECTORIO_SALIDA >> conf/tpconfig.txt
+
+		mkdir $DIRECTORIO_EJECUTABLES
+		mkdir $DIRECTORIO_MAESTROS
+		mkdir $DIRECTORIO_NOVEDADES
+		mkdir $DIRECTORIO_ACEPTADOS
+		mkdir $DIRECTORIO_RECHAZADOS
+		mkdir $DIRECTORIO_PROCESADOS
+		mkdir $DIRECTORIO_SALIDA
+
+		cp originales/scripts/* $DIRECTORIO_EJECUTABLES
+
 	else 
 		echo -e "Error: El parametro ingresado es erroneo"
 	fi

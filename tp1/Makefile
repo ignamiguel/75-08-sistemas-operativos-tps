@@ -6,22 +6,22 @@ mktmp:
 # Crea el directorio donde se van a colocar los archivos a comprimir
 	$(MAKE) clean_tmp
 	mkdir $(compressed_file)
-	mkdir $(compressed_file)/originals
-	mkdir $(compressed_file)/originals/scripts
-	mkdir $(compressed_file)/originals/documentacion
-	mkdir $(compressed_file)/originals/datos
+	mkdir $(compressed_file)/originales
+	mkdir $(compressed_file)/originales/scripts
+	mkdir $(compressed_file)/originales/documentacion
+	mkdir $(compressed_file)/originales/datos
 
 copy_scripts:
 # Copia los scripts a la carpeta donde se va a comprimir
-	cp -r scripts/* $(compressed_file)/originals/scripts
+	cp -r scripts/* $(compressed_file)/originales/scripts
 
 copy_data:
 # Copia los datos a la carpeta donde se va a comprimir
-	cp -r datos/* $(compressed_file)/originals/datos
+	cp -r datos/* $(compressed_file)/originales/datos
 
 copy_docs:
 # Copia la documentacion a la carpeta donde se va a comprimir
-	cp -r documentacion/* $(compressed_file)/originals/documentacion
+	cp -r documentacion/* $(compressed_file)/originales/documentacion
 
 create_conf_folder:
 # Crea la carpeta /conf
@@ -40,7 +40,7 @@ compress:
 	if [ -f $(compressed_file).tgz ]; then 	\
 		rm $(compressed_file).tgz;				\
 	fi
-	tar -C $(compressed_file)/ -cvzf $(compressed_file).tgz .
+	tar -C $(compressed_file)/ -czf $(compressed_file).tgz .
 
 clean_tmp:
 # Borra los archivos temporales
