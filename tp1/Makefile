@@ -1,6 +1,6 @@
 compressed_file = grupo03
 
-all: mktmp copy_scripts copy_data copy_docs create_config_folder copy_readme copy_installer compress clean_tmp
+all: mktmp copy_scripts copy_data copy_docs create_conf_folder copy_readme copy_installer compress clean_tmp
 
 mktmp:
 # Crea el directorio donde se van a colocar los archivos a comprimir
@@ -23,9 +23,9 @@ copy_docs:
 # Copia la documentacion a la carpeta donde se va a comprimir
 	cp -r documentacion/* $(compressed_file)/originals/documentacion
 
-create_config_folder:
-# Crea la carpeta /config
-	mkdir $(compressed_file)/config
+create_conf_folder:
+# Crea la carpeta /conf
+	mkdir $(compressed_file)/conf
 
 copy_readme:
 # Copia el readme a la raiz para que el usuario la pueda ver facilmente
