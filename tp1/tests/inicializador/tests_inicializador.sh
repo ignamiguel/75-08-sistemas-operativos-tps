@@ -18,4 +18,4 @@
 # 2) Instalo con un camino feliz. Tiro el stdout porque no me interesa
 cat ../inicializador/instalacion_feliz.txt | ./instalador.sh > /dev/null
 # 3) Inicializo
-scripts/inicializacion.sh
+dir_scripts/inicializacion.sh

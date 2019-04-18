@@ -15,8 +15,8 @@
 # DIRECTORIO_EJECUTABLES
 # DIRECTORIO_MAESTROS
 # DIRECTORIO_NOVEDADES
-# DIRECTORIO_NOV_PROCESADAS
-# DIRECTORIO_FALLIDOS
+# DIRECTORIO_ACEPTADOS
+# DIRECTORIO_RECHAZADOS
 # DIRECTORIO_PROCESADOS
 # DIRECTORIO_SALIDA
 # 
@@ -35,9 +35,37 @@
 # 4) En el caso 3) invocar al script PROCESO e indicar por pantalla y en el log el process id.
 # 5) ADVERTENCIA: no invocar el proceso si ya hay uno corriendo
 # 6) Grabar log mientras se ejecuta el script. Mostrar lo mismo en pantalla
+# 7) Se puede ejecura una vez que el sistema fue instalado
 
-if [ ! -f conf/tpconfig.txt ]; then
-    echo 'no existe la config'
+function write_to_log(){
+    # ---------------------------------------------------------------------
+    # Escribe el mensaje en el log y lo comunica al usuario.
+    # 
+    # Recibe por parámetro:
+    # 1) Tipo de error (INF, ALE o ERR)
+    # 2) Mensaje de error
+    # 3) Mensaje extra para comunicar al usuario
+    # 
+    # Por último termina la ejecución del script.
+    # ---------------------------------------------------------------------
+    local fecha=$(date '+%d/%m/%Y %H:%M:%S')
+    echo "$fecha-$USER-inicializacion-$1-$2" >> conf/log/inicializacion.log
+    echo $2
+    if $3; then echo $3; fi
+    exit 0
+}
+
+# Me fijo si ya está inicializado
+if [ $inicializado ]; then
+    write_to_log "ALE" "El sistema ya está inicializado"
 fi
 
-echo 'done'
+# Cargo la config en la variable dirs
+. conf/tpconfig.txt
+# Me fijo que existan los directorios
+for dir in ${dirs[@]}; do
+    if [ ! -d $dir ]; then
+        write_to_log "ERR" "No existe el directorio $dir, el cual es el directorio designado para los ${dirs[$dir]}." "Ejecute ./instalador.sh -r para reparar el sistema"
+    fi
+done
+

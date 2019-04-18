@@ -10,27 +10,29 @@ configurarDirectorios(){
 	echo 'Configuración de Directorios'
 	echo '---------------------------------------------' 
 	echo
+	# Utilizo un array asociativo para después poder iterar los directorios
+	declare -A dirs
 	#leer el dato del teclado y guardarlo en la variable de directorio correspondiente
-	read -p "Defina el directorio de Ejecutables: " DIRECTORIO_EJECUTABLES
-	read -p "Defina el directorio de Archivos Maestros: " DIRECTORIO_MAESTROS
-	read -p "Defina el directorio de Novedades: " DIRECTORIO_NOVEDADES
-	read -p "Defina el directorio de Novedades Aceptadas: " DIRECTORIO_ACEPTADOS
-	read -p "Defina el directorio de Novedades Rechazadas: " DIRECTORIO_RECHAZADOS
-	read -p "Defina el directorio de Novedades Procesadas: " DIRECTORIO_PROCESADOS
-	read -p "Defina el directorio de Archivos de Salida: " DIRECTORIO_SALIDA
+	read -p "Defina el directorio de Ejecutables: " dirs[ejecutables]
+	read -p "Defina el directorio de Archivos Maestros: " dirs[maestros]
+	read -p "Defina el directorio de Novedades: " dirs[novedades]
+	read -p "Defina el directorio de Novedades Aceptadas: " dirs[aceptados]
+	read -p "Defina el directorio de Novedades Rechazadas: " dirs[rechazados]
+	read -p "Defina el directorio de Novedades Procesadas: " dirs[proesados]
+	read -p "Defina el directorio de Archivos de Salida: " dirs[salida]
 
 
 	echo 'Directorios definidos para la Instalación'
 	echo '---------------------------------------------' 
 	echo
 	#Mostrar los directorios configurados
-	echo "Directorio de Ejecutables: $DIRECTORIO_EJECUTABLES"
-	echo "Directorio de Archivos Maestros: $DIRECTORIO_MAESTROS"
-	echo "Directorio de las Novedades: $DIRECTORIO_NOVEDADES"
-	echo "Directorio de las Novedades Aceptadas: $DIRECTORIO_ACEPTADOS"
-	echo "Directorio de las Novedades Rechazadas: $DIRECTORIO_RECHAZADOS"
-	echo "Directorio de las Novedades Procesadas: $DIRECTORIO_PROCESADOS"
-	echo "Directorio de las Archivos de Salida: $DIRECTORIO_SALIDA"
+	echo "Directorio de Ejecutables: ${dirs[ejecutables]}"
+	echo "Directorio de Archivos Maestros: ${dirs[maestros]}"
+	echo "Directorio de las Novedades: ${dirs[novedades]}"
+	echo "Directorio de las Novedades Aceptadas: ${dirs[aceptados]}"
+	echo "Directorio de las Novedades Rechazadas: ${dirs[rechazados]}"
+	echo "Directorio de las Novedades Procesadas: ${dirs[procesados]}"
+	echo "Directorio de las Archivos de Salida: ${dirs[salida]}"
 	echo '---------------------------------------------' 
 	echo
 
@@ -42,26 +44,20 @@ configurarDirectorios(){
 		#Validar todos los datos
 		echo "Se instalo todo"
 		#Instalar
-		# Esto definitivamente se puede optimizar y hay que terminarlo,
-		# es solo algo rapido para dejar una instalacion medianamente 
-		# valida.
-		echo DIRECTORIO_EJECUTABLES=$DIRECTORIO_EJECUTABLES >> conf/tpconfig.txt
-		echo DIRECTORIO_MAESTROS=$DIRECTORIO_MAESTROS >> conf/tpconfig.txt
-		echo DIRECTORIO_NOVEDADES=$DIRECTORIO_NOVEDADES >> conf/tpconfig.txt
-		echo DIRECTORIO_ACEPTADOS=$DIRECTORIO_ACEPTADOS >> conf/tpconfig.txt
-		echo DIRECTORIO_RECHAZADOS=$DIRECTORIO_RECHAZADOS >> conf/tpconfig.txt
-		echo DIRECTORIO_PROCESADOS=$DIRECTORIO_PROCESADOS >> conf/tpconfig.txt
-		echo DIRECTORIO_SALIDA=$DIRECTORIO_SALIDA >> conf/tpconfig.txt
+		
+		# Guardo dirs en conf/tpconfig.txt
+		echo 'declare -A dirs' > conf/tpconfig.txt
+		echo 'dirs=(' >> conf/tpconfig.txt
+		for dir in "${!dirs[@]}"; do
+			echo -e "\t[$dir]=${dirs[$dir]}" >> conf/tpconfig.txt
+		done
+		echo ')' >> conf/tpconfig.txt
 
-		mkdir $DIRECTORIO_EJECUTABLES
-		mkdir $DIRECTORIO_MAESTROS
-		mkdir $DIRECTORIO_NOVEDADES
-		mkdir $DIRECTORIO_ACEPTADOS
-		mkdir $DIRECTORIO_RECHAZADOS
-		mkdir $DIRECTORIO_PROCESADOS
-		mkdir $DIRECTORIO_SALIDA
+		# Creo los directorios
+		mkdir ${dirs[@]}
 
-		cp originales/scripts/* $DIRECTORIO_EJECUTABLES
+		# Copio los scripts
+		cp originales/scripts/* ${dirs[ejecutables]}
 
 	else 
 		echo -e "Error: El parametro ingresado es erroneo"

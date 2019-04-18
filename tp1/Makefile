@@ -24,8 +24,9 @@ copy_docs:
 	cp -r documentacion/* $(compressed_file)/originales/documentacion
 
 create_conf_folder:
-# Crea la carpeta /conf
+# Crea la carpeta /conf y /conf/log
 	mkdir $(compressed_file)/conf
+	mkdir $(compressed_file)/conf/log
 
 copy_readme:
 # Copia el readme a la raiz para que el usuario la pueda ver facilmente
