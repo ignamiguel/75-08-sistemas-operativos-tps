@@ -36,6 +36,8 @@
 # 5) ADVERTENCIA: no invocar el proceso si ya hay uno corriendo
 # 6) Grabar log mientras se ejecuta el script. Mostrar lo mismo en pantalla
 # 7) Se puede ejecura una vez que el sistema fue instalado
+# 8) No debe ejecutarse como un proceso hijo porque de esa forma las variables de ambiente no 
+# serían accesibles para otros scripts. Se debe ejecutar como ${dirs[ejecutables]}/inicializacion.sh.
 
 function write_to_log(){
     # ---------------------------------------------------------------------
@@ -51,7 +53,7 @@ function write_to_log(){
     local fecha=$(date '+%d/%m/%Y %H:%M:%S')
     echo "$fecha-$USER-inicializacion-$1-$2" >> conf/log/inicializacion.log
     echo $2
-    if $3; then echo $3; fi
+    if [ $3 ]; then echo $3; fi
     exit 0
 }
 
@@ -60,12 +62,24 @@ if [ $inicializado ]; then
     write_to_log "ALE" "El sistema ya está inicializado"
 fi
 
-# Cargo la config en la variable dirs
-. conf/tpconfig.txt
+# Cargo los directorios en la variable dirs
+declare -A dirs
+config=$( cd "$(dirname "$BASH_SOURCE")" >/dev/null 2>&1 && pwd )/../conf/tpconfig.txt
+while read -r reg; do # reg=registro
+    IFS="-" read -ra campos <<< "$reg"
+    # dirs[${campos[0]}]="${campos[1]}"
+    dirs[${campos[0]}]="$(sed 's/ /\ /g' <<< "${campos[1]}")"
+
+done < "$config"
+
+
 # Me fijo que existan los directorios
-for dir in ${dirs[@]}; do
-    if [ ! -d $dir ]; then
+for dir in "${dirs[@]}"; do
+    if [ ! -d "$dir" ]; then
         write_to_log "ERR" "No existe el directorio $dir, el cual es el directorio designado para los ${dirs[$dir]}." "Ejecute ./instalador.sh -r para reparar el sistema"
     fi
 done
 
+# # Al finalizar cambio la variable inicializado a true y exporto dirs
+# export dirs
+# inicializado=true

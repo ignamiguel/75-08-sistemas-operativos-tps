@@ -44,20 +44,25 @@ configurarDirectorios(){
 		#Validar todos los datos
 		echo "Se instalo todo"
 		#Instalar
-		
-		# Guardo dirs en conf/tpconfig.txt
-		echo 'declare -A dirs' > conf/tpconfig.txt
-		echo 'dirs=(' >> conf/tpconfig.txt
+				
+		# Guardo dirs y otras carpetas en conf/tpconfig.txt
+		grupo=$( cd "$(dirname "$BASH_SOURCE")" >/dev/null 2>&1 && pwd )
+		fecha=$(date '+%d/%m/%Y %H:%M:%S')
+		echo "grupo-$grupo-$USER-$fecha" > conf/tpconfig.txt
+		echo "conf-$grupo/conf-$USER-$fecha" >> conf/tpconfig.txt
+		echo "log-$grupo/conf/log-$USER-$fecha" >> conf/tpconfig.txt
 		for dir in "${!dirs[@]}"; do
-			echo -e "\t[$dir]=${dirs[$dir]}" >> conf/tpconfig.txt
+			echo "$dir-$grupo/${dirs[$dir]}-$USER-$fecha" >> conf/tpconfig.txt
 		done
-		echo ')' >> conf/tpconfig.txt
 
 		# Creo los directorios
 		mkdir ${dirs[@]}
 
 		# Copio los scripts
 		cp originales/scripts/* ${dirs[ejecutables]}
+
+		# Copio los archivos maestros
+		cp originales/datos/{Operadores.txt,Sucursales.txt} ${dirs[maestros]}
 
 	else 
 		echo -e "Error: El parametro ingresado es erroneo"
