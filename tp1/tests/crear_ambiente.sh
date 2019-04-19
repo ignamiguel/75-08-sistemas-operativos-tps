@@ -12,7 +12,7 @@
 
 # Borro el ambiente anterior si existe
 if [ -d tests/ambiente_de_testing ]; then
-    rm -R tests/ambiente_de_testing
+    rm -R -f tests/ambiente_de_testing
 fi
 
 # Creo el nuevo ambiente

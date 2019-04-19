@@ -47,19 +47,28 @@ function write_to_log(){
     # 1) Tipo de error (INF, ALE o ERR)
     # 2) Mensaje de error
     # 3) Mensaje extra para comunicar al usuario
-    # 
-    # Por último termina la ejecución del script.
     # ---------------------------------------------------------------------
     local fecha=$(date '+%d/%m/%Y %H:%M:%S')
+    # Escribir en el log
     echo "$fecha-$USER-inicializacion-$1-$2" >> conf/log/inicializacion.log
-    echo $2
-    if [ $3 ]; then echo $3; fi
-    exit 0
+    
+    if [ "$1" = "ERR" ]; then
+        # Mostrar el mensaje por stderr
+        1>&2 echo $2;
+        if [ "$3" ]; then 1>&2 echo $3; fi
+    else
+        # Mostrar el mensaje por stdout
+        echo $2;
+        if [ "$3" ]; then echo $3; fi
+    fi
 }
+
+reparar="Ejecute ./instalador.sh -r para reparar el sistema."
 
 # Me fijo si ya está inicializado
 if [ $inicializado ]; then
-    write_to_log "ALE" "El sistema ya está inicializado"
+    write_to_log "ALE" "El sistema ya está inicializado." "Si el proceso no está en ejecución puede iniciarlo con ${dirs[ejecutables]}/start.sh."
+    return 0
 fi
 
 # Cargo los directorios en la variable dirs
@@ -67,19 +76,49 @@ declare -A dirs
 config=$( cd "$(dirname "$BASH_SOURCE")" >/dev/null 2>&1 && pwd )/../conf/tpconfig.txt
 while read -r reg; do # reg=registro
     IFS="-" read -ra campos <<< "$reg"
-    # dirs[${campos[0]}]="${campos[1]}"
-    dirs[${campos[0]}]="$(sed 's/ /\ /g' <<< "${campos[1]}")"
-
+    dirs[${campos[0]}]="${campos[1]}"
 done < "$config"
 
-
 # Me fijo que existan los directorios
-for dir in "${dirs[@]}"; do
-    if [ ! -d "$dir" ]; then
-        write_to_log "ERR" "No existe el directorio $dir, el cual es el directorio designado para los ${dirs[$dir]}." "Ejecute ./instalador.sh -r para reparar el sistema"
+for dir_key in "${!dirs[@]}"; do
+    if [ ! -d "${dirs[$dir_key]}" ]; then
+        write_to_log "ERR" "No existe el directorio ${dirs[$dir_key]}, el cual es el directorio designado para los archivos \"$dir_key\"." "$reparar"
+        return 0
     fi
 done
 
-# # Al finalizar cambio la variable inicializado a true y exporto dirs
-# export dirs
-# inicializado=true
+# Me fijo que existan los scripts y tener permiso de lectura y ejecucíon sobre ellos
+for script in "${dirs[ejecutables]}"/{inicializacion.sh,instalador.sh,proceso.sh,start.sh,stop.sh}; do
+    # Existencia
+    if [ ! -f "$script" ]; then
+        write_to_log "ERR" "No existe el ejecutable $script en el directorio de ejecutables ${dirs[ejecutables]}." "$reparar"
+        return 0
+    fi
+    # Permisos
+    if [ ! -r "$script" ] || [ ! -x "$script" ]; then
+        chmod 500 "$script"
+        write_to_log "INF" "Se corrigen los permisos sobre el script $script para poder leerlo y ejecutarlo."
+    fi
+done
+
+# Me fijo que existan los archivos maestros
+for archivo in "${dirs[maestros]}"/{Operadores.txt,Sucursales.txt}; do
+    # Existencia
+    if [ ! -f "$archivo" ]; then
+        write_to_log "ERR" "No existe el archivo maestro $archivo en el directorio de archivos maestros ${dirs[maestros]}." "$reparar"
+        return 0
+    fi
+    # Permisos
+    if [ ! -r "$archivo" ]; then
+        chmod 100 "$archivo"
+        write_to_log "INF" "Se corrigen los permisos sobre el archivo maestro $archivo para poder leerlo."
+    fi
+done
+
+# Al finalizar cambio la variable inicializado a true, exporto dirs y escribo el log
+export dirs
+export inicializado=true
+write_to_log "INF" "El sistema fue inicializado correctamente."
+
+# Comenzar el proceso
+"${dirs[ejecutables]}/start.sh"
