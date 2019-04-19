@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # ---------------------------------------------------------------------
 # tests_inicializador.sh
 # ---------------------------------------------------------------------
@@ -32,7 +34,13 @@ else
     1>&2 echo "Falló el test 01 del inicializador."
 fi
 
-# 5) Vuelvo al directorio original
+# 5) Finalizo el proceso
+(
+    . dir_scripts/inicializacion.sh
+    ./dir_scripts/stop.sh
+) > /dev/null 2> /dev/null
+
+# 6) Vuelvo al directorio original
 cd ../../
 
 
@@ -54,7 +62,7 @@ cd tests/ambiente_de_testing
 (
         . dir_scripts/inicializacion.sh;
         . dir_scripts/inicializacion.sh;
-) > /dev/null
+) > /dev/null 2> /dev/null
 
 # 4) Valido la salida
 if [ $? -eq 1 ]; then
@@ -63,7 +71,13 @@ else
     1>&2 echo "Falló el test 02 del inicializador."
 fi
 
-# 5) Vuelvo al directorio original
+# 5) Finalizo el proceso
+(
+    . dir_scripts/inicializacion.sh
+    ./dir_scripts/stop.sh
+) > /dev/null 2> /dev/null
+
+# 6) Vuelvo al directorio original
 cd ../../
 
 
@@ -94,7 +108,7 @@ else
     1>&2 echo "Falló el test 03 del inicializador."
 fi
 
-# 6) Vuelvo al directorio original
+# 7) Vuelvo al directorio original
 cd ../../
 
 
@@ -156,7 +170,13 @@ else
     1>&2 echo "Falló el test 05 del inicializador."
 fi
 
-# 6) Vuelvo al directorio original
+# 6) Finalizo el proceso
+(
+    . dir_scripts/inicializacion.sh
+    ./dir_scripts/stop.sh
+) > /dev/null 2> /dev/null
+
+# 7) Vuelvo al directorio original
 cd ../../
 
 
@@ -218,5 +238,11 @@ else
     1>&2 echo "Falló el test 07 del inicializador."
 fi
 
-# 6) Vuelvo al directorio original
+# 7) Finalizo el proceso
+(
+    . dir_scripts/inicializacion.sh
+    ./dir_scripts/stop.sh
+) > /dev/null 2> /dev/null
+
+# 8) Vuelvo al directorio original
 cd ../../

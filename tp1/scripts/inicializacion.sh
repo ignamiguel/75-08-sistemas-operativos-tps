@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Breve descripción:
 # 
 # Para chequear que el sistema fue inicializado busca la variable de ambiente $inicializado
@@ -40,11 +42,11 @@
 # serían accesibles para otros scripts. Se debe ejecutar como ${dirs[ejecutables]}/inicializacion.sh.
 # 
 # Devuelve los siguientes valores para cada uno de los escenarios:
-# 0: el sistema fue inicializado correctamente
-# 1: el sistema ya estaba inicializado
-# 2: no existe algún directorio
-# 3: no existe algún script
-# 4: no existe algún archivo maestro
+# 0: el sistema fue inicializado correctamente.
+# 1: el sistema ya estaba inicializado.
+# 2: no existe algún directorio.
+# 3: no existe algún script.
+# 4: no existe algún archivo maestro.
 
 conf_dir=$( cd "$(dirname "$BASH_SOURCE")" >/dev/null 2>&1 && pwd )/../conf
 
@@ -76,13 +78,13 @@ reparar="Ejecute ./instalador.sh -r para reparar el sistema."
 
 # Me fijo si ya está inicializado
 if [ $inicializado ]; then
-    write_to_log "ALE" "Inicialización cancelada. El sistema ya está inicializado." "Si el proceso no está en ejecución puede iniciarlo con ${dirs[ejecutables]}/start.sh."
+    write_to_log "ERR" "Inicialización cancelada. El sistema ya está inicializado." "Si el proceso no está en ejecución puede iniciarlo con ${dirs[ejecutables]}/start.sh."
     return 1
 fi
 write_to_log "INF" "El sistema no está inicializado, se procede a inicializarlo."
 
 # Cargo los directorios en la variable dirs
-declare -A dirs
+declare -x -A dirs
 while read -r reg; do # reg=registro
     IFS="-" read -ra campos <<< "$reg"
     dirs[${campos[0]}]="${campos[1]}"
@@ -128,12 +130,15 @@ done
 write_to_log "INF" "La verificación de los archivos maestros es exitosa."
 
 # Al finalizar cambio la variable inicializado a true, exporto dirs y escribo el log
-export dirs
 export inicializado=true
+for dir_key in "${!dirs[@]}"; do
+    export "${dir_key}"="${dirs[$dir_key]}"
+done
+export dir_keys="${!dirs[@]}"
+
 write_to_log "INF" "El sistema fue inicializado correctamente."
 
-# Comenzar el proceso
-"${dirs[ejecutables]}/proceso.sh" &
-write_to_log "INF" "Se inició el proceso con el pid $!."
+# Comenzar el proceso. Se deja que lo haga start.sh.
+"${dirs[ejecutables]}/start.sh"
 
 return 0
