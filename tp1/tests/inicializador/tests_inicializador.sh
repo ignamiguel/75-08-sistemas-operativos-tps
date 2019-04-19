@@ -23,14 +23,13 @@ cd tests/ambiente_de_testing
 ./instalador.sh < ../inicializador/instalacion_feliz.txt > /dev/null
 
 # 3) Inicializo
-salida=$(. dir_scripts/inicializacion.sh)
+(. dir_scripts/inicializacion.sh ) > /dev/null
 
 # 4) Valido la salida
-regex="El sistema fue inicializado correctamente\..*"
-if [ ! "$salida" = $regex ]; then
-    1>&2 echo "Falló el test 01 del inicializador."
-else
+if [ $? -eq 0 ]; then
     echo "Test 01 del inicializador OK."
+else
+    1>&2 echo "Falló el test 01 del inicializador."
 fi
 
 # 5) Vuelvo al directorio original
@@ -52,19 +51,16 @@ cd tests/ambiente_de_testing
 ./instalador.sh < ../inicializador/instalacion_feliz.txt > /dev/null
 
 # 3) Inicializo dos veces.
-salida=$(
-    (
+(
         . dir_scripts/inicializacion.sh;
         . dir_scripts/inicializacion.sh;
-    ) | tr -d '\n'
-)
+) > /dev/null
 
 # 4) Valido la salida
-regex="El sistema fue inicializado correctamente\.El sistema ya está inicializado\.Si el proceso no está en ejecución puede iniciarlo con .*start\.sh\..*"
-if [[ ! $salida =~ $regex ]]; then
-    1>&2 echo "Falló el test 02 del inicializador."
-else
+if [ $? -eq 1 ]; then
     echo "Test 02 del inicializador OK."
+else
+    1>&2 echo "Falló el test 02 del inicializador."
 fi
 
 # 5) Vuelvo al directorio original
@@ -89,14 +85,13 @@ cd tests/ambiente_de_testing
 rm -R dir_salida
 
 # 4) Inicializo
-salida=$(. dir_scripts/inicializacion.sh 2>&1 | tr -d '\n')
+(. dir_scripts/inicializacion.sh) > /dev/null 2> /dev/null
 
 # 5) Valido la salida
-regex="No existe el directorio .*dir_salida, el cual es el directorio designado para los archivos \"salida\"\.Ejecute \./instalador\.sh -r para reparar el sistema\..*"
-if [[ ! $salida =~ $regex ]]; then
-    1>&2 echo "Falló el test 03 del inicializador."
-else
+if [ $? -eq 2 ]; then
     echo "Test 03 del inicializador OK."
+else
+    1>&2 echo "Falló el test 03 del inicializador."
 fi
 
 # 6) Vuelvo al directorio original
@@ -121,14 +116,13 @@ cd tests/ambiente_de_testing
 rm dir_scripts/stop.sh
 
 # 4) Inicializo
-salida=$(. dir_scripts/inicializacion.sh 2>&1 | tr -d '\n')
+(. dir_scripts/inicializacion.sh) > /dev/null 2> /dev/null
 
 # 5) Valido la salida
-regex="No existe el ejecutable .*stop\.sh en el directorio de ejecutables .*dir_scripts\.Ejecute \./instalador.sh -r para reparar el sistema\..*"
-if [[ ! $salida =~ $regex ]]; then
-    1>&2 echo "Falló el test 04 del inicializador."
-else
+if [ $? -eq 3 ]; then
     echo "Test 04 del inicializador OK."
+else
+    1>&2 echo "Falló el test 04 del inicializador."
 fi
 
 # 6) Vuelvo al directorio original
@@ -139,7 +133,7 @@ cd ../../
 # ---------------------------------------------------------------------
 # Test 05
 # ---------------------------------------------------------------------
-# Inicializo sin permisos de ejecución para el proceso
+# Inicializo sin permisos de ejecución para proceso.sh
 # ---------------------------------------------------------------------
 
 # 1) Ambiente nuevo.
@@ -153,14 +147,13 @@ cd tests/ambiente_de_testing
 chmod 600 dir_scripts/proceso.sh
 
 # 4) Inicializo
-salida=$(. dir_scripts/inicializacion.sh | tr -d '\n')
+salida=$(. dir_scripts/inicializacion.sh | grep 'Se corrigen los permisos sobre el script .*proceso.sh para poder leerlo y ejecutarlo')
 
 # 5) Valido la salida
-regex="Se corrigen los permisos sobre el script .*proceso.sh para poder leerlo y ejecutarlo\.El sistema fue inicializado correctamente\..*"
-if [[ ! $salida =~ $regex ]]; then
-    1>&2 echo "Falló el test 05 del inicializador."
-else
+if [ ! -z "$salida" ] && [ $? -eq 0 ]; then
     echo "Test 05 del inicializador OK."
+else
+    1>&2 echo "Falló el test 05 del inicializador."
 fi
 
 # 6) Vuelvo al directorio original
@@ -185,14 +178,13 @@ cd tests/ambiente_de_testing
 rm dir_maestros/Operadores.txt
 
 # 4) Inicializo
-salida=$(. dir_scripts/inicializacion.sh 2>&1 | tr -d '\n')
+(. dir_scripts/inicializacion.sh) 2> /dev/null > /dev/null
 
 # 5) Valido la salida
-regex="No existe el archivo maestro .*Operadores\.txt en el directorio de archivos maestros .*dir_maestros.Ejecute \./instalador.sh -r para reparar el sistema\..*"
-if [[ ! $salida =~ $regex ]]; then
-    1>&2 echo "Falló el test 06 del inicializador."
-else
+if [ $? -eq 4 ]; then
     echo "Test 06 del inicializador OK."
+else
+    1>&2 echo "Falló el test 06 del inicializador."
 fi
 
 # 6) Vuelvo al directorio original
@@ -217,14 +209,13 @@ cd tests/ambiente_de_testing
 chmod 000 dir_maestros/Sucursales.txt
 
 # 4) Inicializo
-salida=$(. dir_scripts/inicializacion.sh | tr -d '\n')
+salida=$(. dir_scripts/inicializacion.sh | grep 'Se corrigen los permisos sobre el archivo maestro .*Sucursales\.txt para poder leerlo')
 
 # 5) Valido la salida
-regex="Se corrigen los permisos sobre el archivo maestro .*Sucursales.txt para poder leerlo\.El sistema fue inicializado correctamente\..*"
-if [[ ! $salida =~ $regex ]]; then
-    1>&2 echo "Falló el test 07 del inicializador."
-else
+if [ ! -z "$salida" ] && [ $? -eq 0 ]; then
     echo "Test 07 del inicializador OK."
+else
+    1>&2 echo "Falló el test 07 del inicializador."
 fi
 
 # 6) Vuelvo al directorio original
