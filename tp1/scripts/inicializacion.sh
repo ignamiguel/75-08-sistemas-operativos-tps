@@ -46,6 +46,8 @@
 # 3: no existe algún script
 # 4: no existe algún archivo maestro
 
+conf_dir=$( cd "$(dirname "$BASH_SOURCE")" >/dev/null 2>&1 && pwd )/../conf
+
 function write_to_log(){
     # ---------------------------------------------------------------------
     # Escribe el mensaje en el log y lo comunica al usuario.
@@ -57,7 +59,7 @@ function write_to_log(){
     # ---------------------------------------------------------------------
     local fecha=$(date '+%d/%m/%Y %H:%M:%S')
     # Escribir en el log
-    echo "$fecha-$USER-inicializacion-$1-$2" >> conf/log/inicializacion.log
+    echo "$fecha-$USER-inicializacion-$1-$2" >> "$conf_dir/log/inicializacion.log"
     
     if [ "$1" = "ERR" ]; then
         # Mostrar el mensaje por stderr
@@ -81,11 +83,10 @@ write_to_log "INF" "El sistema no está inicializado, se procede a inicializarlo
 
 # Cargo los directorios en la variable dirs
 declare -A dirs
-config=$( cd "$(dirname "$BASH_SOURCE")" >/dev/null 2>&1 && pwd )/../conf/tpconfig.txt
 while read -r reg; do # reg=registro
     IFS="-" read -ra campos <<< "$reg"
     dirs[${campos[0]}]="${campos[1]}"
-done < "$config"
+done < "$conf_dir/tpconfig.txt"
 
 # Me fijo que existan los directorios
 for dir_key in "${!dirs[@]}"; do
@@ -133,6 +134,6 @@ write_to_log "INF" "El sistema fue inicializado correctamente."
 
 # Comenzar el proceso
 "${dirs[ejecutables]}/proceso.sh" &
-write_to_log "INF" "El proceso lleva el pid $!."
+write_to_log "INF" "Se inició el proceso con el pid $!."
 
 return 0

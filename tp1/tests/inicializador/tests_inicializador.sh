@@ -147,7 +147,7 @@ cd tests/ambiente_de_testing
 chmod 600 dir_scripts/proceso.sh
 
 # 4) Inicializo
-salida=$(. dir_scripts/inicializacion.sh | grep 'Se corrigen los permisos sobre el script .*proceso.sh para poder leerlo y ejecutarlo')
+salida=$(. dir_scripts/inicializacion.sh | grep -m 1 'Se corrigen los permisos sobre el script .*proceso.sh para poder leerlo y ejecutarlo')
 
 # 5) Valido la salida
 if [ ! -z "$salida" ] && [ $? -eq 0 ]; then
@@ -209,7 +209,7 @@ cd tests/ambiente_de_testing
 chmod 000 dir_maestros/Sucursales.txt
 
 # 4) Inicializo
-salida=$(. dir_scripts/inicializacion.sh | grep 'Se corrigen los permisos sobre el archivo maestro .*Sucursales\.txt para poder leerlo')
+salida=$(. dir_scripts/inicializacion.sh | grep -m 1 'Se corrigen los permisos sobre el archivo maestro .*Sucursales\.txt para poder leerlo')
 
 # 5) Valido la salida
 if [ ! -z "$salida" ] && [ $? -eq 0 ]; then
