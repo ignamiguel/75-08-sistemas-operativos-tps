@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Inicia el proceso.
+# 
+# Devuelve los siguientes valores para cada uno de los escenarios:
 # 0: el proceso se inició correctamente.
 # 1: el proceso no se inició porque ya estaba en ejecución.
 # 2: el proceso no se inició porque no está inicializado el sistema.

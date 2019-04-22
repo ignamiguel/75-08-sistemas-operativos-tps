@@ -1,45 +1,36 @@
 #!/bin/bash
 
-# Breve descripción:
-# 
-# Para chequear que el sistema fue inicializado busca la variable de ambiente $inicializado
-# Si $inicializado == true entonces el sistema está inicializado. En caso contrario continúa
-# con los siguientes pasos:
-# 
 # 1) Lee /conf/tpconfig.txt.
-# 2) Carga las variables de ambiente.
-# 3) Si faltan las carpetas indicadas por las variables de ambiente u otros archivos 
-# necesarios, el sistema debe reparase por lo cual finaliza la inicialización.
-# 4) Si existen todas las carpetas indicadas en /conf/tpconfig.txt y todos los archivos 
-# necesarios, el sistema continúa.
+# 2) Carga las variables allí establecidas.
+# 3) Si faltan las carpetas indicadas por las variables u otros 
+# archivos necesarios, el sistema debe reparase por lo cual finaliza la
+# inicialización.
+# 4) Chequea tener permisos de lectura y escritura sobre los scripts, y
+# los corrige en caso de ser necesario.
+# 5) Chequea tener permiso de lectura sobre los archivos maestros, y 
+# lo corrige en caso de ser necesario.
+# 6) Setea las variables de /conf/tpconfig.txt como variables de 
+# ambiente.
 # 
-# Variables definidas en /conf/tpconfig.txt:
-# DIRECTORIO_EJECUTABLES
-# DIRECTORIO_MAESTROS
-# DIRECTORIO_NOVEDADES
-# DIRECTORIO_ACEPTADOS
-# DIRECTORIO_RECHAZADOS
-# DIRECTORIO_PROCESADOS
-# DIRECTORIO_SALIDA
+# Para chequear que el sistema fue inicializado busca la variable de 
+# ambiente $inicializado. Si $inicializado == true entonces el sistema
+# está inicializado y finaliza la ejecucion. En caso contrario realiza
+# los pasos descritos previamente.
 # 
-# Notar:
-# 1) Los archivos del directorio maestro deben tener permiso de lectura, si no lo tiene 
-# corregirlo.
-# 2) Los ejecutables deben tener permiso de lectura y ejecución, si no lo tiene, 
-# corregirlo.
-# 3) Setear variables de ambiente:
-# Todos los identificadores de directorio definidos en /conf/tpconfig.txt deben definirse como
-# variables de ambiente con el contenido adecuado.
-# Estas variables deben permanecer durante toda la ejecución del sistema y ser accesibles por todos
-# los comandos desencadenados a partir de éste.
-# El único que lee el archivo de configuración es este script, el resto de los comandos trabajan con
-# las variables de ambiente directamente.
-# 4) En el caso 3) invocar al script PROCESO e indicar por pantalla y en el log el process id.
-# 5) ADVERTENCIA: no invocar el proceso si ya hay uno corriendo
-# 6) Grabar log mientras se ejecuta el script. Mostrar lo mismo en pantalla
-# 7) Se puede ejecura una vez que el sistema fue instalado
-# 8) No debe ejecutarse como un proceso hijo porque de esa forma las variables de ambiente no 
-# serían accesibles para otros scripts. Se debe ejecutar como ${dirs[ejecutables]}/inicializacion.sh.
+# Setea las siguientes variables de ambiente:
+# - ejecutables
+# - maestros
+# - novedades
+# - aceptados
+# - rechazados
+# - proesados
+# - salida
+# - dir_keys=las variables anteriores separadas por espacios (sirve 
+# para iterar por ellas).
+
+# Nota: No debe ejecutarse como un proceso hijo porque de esa forma las
+# variables de ambiente no serían accesibles para otros scripts. Se 
+# debe ejecutar como . $ejecutables/inicializacion.sh.
 # 
 # Devuelve los siguientes valores para cada uno de los escenarios:
 # 0: el sistema fue inicializado correctamente.

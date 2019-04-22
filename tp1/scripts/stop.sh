@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Detiene el proceso.
+# 
+# Devuelve los siguientes valores para cada uno de los escenarios:
 # 0: el proceso se detuvo correctamente.
 # 1: el proceso no se detuvo porque no estaba en ejecución.
 
