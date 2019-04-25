@@ -85,9 +85,9 @@ validarTrailer()
 		trailer_codigo_postal=$codigo_postal
 		trailer_cantidad_lineas=$doc_numero
 	  done < $f
-	  #Comparo cantidad de lineas del archivo y suma codigo postal con los trailers
-	  let "codigo_postal_suma=codigo_postal_suma -trailer_codigo_postal " #le resto porque me suma el ultimo dos veces
-	  if [ $cantidad_lineas -eq $trailer_cantidad_lineas ] && [ $codigo_postal_suma -eq $trailer_codigo_postal ];
+	  
+	  let "codigo_postal_suma=codigo_postal_suma -trailer_codigo_postal " 
+	  if [ $lineas -eq $trailer_cantidad_lineas ] && [ $cp_total -eq $trailer_codigo_postal ];
 	  then
 		log "El trailer de $f es correcto"
 	  else
@@ -103,8 +103,7 @@ do
 	CONTADOR=$((CONTADOR+1))
 	log "ciclo:" "$CONTADOR"
 
-	#Verifico que sean validos los archivos de novedades
-	#Mando a aceptados o rechazados segun corresponda
+	
 	if [ "$(ls -A "$NOVEDADES_PATH")" ]
 	then	
 		validarNombreTipo
@@ -115,11 +114,7 @@ do
 		validarTrailer
 	fi
 
-	#Proceso los archivos de aceptados
-	#if [ "$(ls -A "$ACEPTADOS_PATH")" ]
-	#then	
-	#	procesamiento
-	#fi
+	
 
 	sleep 1m
 done
