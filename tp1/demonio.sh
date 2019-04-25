@@ -72,7 +72,6 @@ validarTrailer()
 	
 	for f in "$ACEPTADOS_PATH"/* 
 	do
-	  
 	  lineas=-1 
 	  cp_total=0
 	  trailer_cantidad_lineas=0
@@ -86,7 +85,7 @@ validarTrailer()
 		trailer_cantidad_lineas=$doc_numero
 	  done < $f
 	  
-	  let "codigo_postal_suma=codigo_postal_suma -trailer_codigo_postal " 
+	  let "cp_total=cp_total -trailer_codigo_postal " 
 	  if [ $lineas -eq $trailer_cantidad_lineas ] && [ $cp_total -eq $trailer_codigo_postal ];
 	  then
 		log "El trailer de $f es correcto"
