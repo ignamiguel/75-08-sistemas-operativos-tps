@@ -79,88 +79,30 @@ configurarDirectorios(){
 			echo "Instalación CANCELADA"
 			configurarDirectorios
 		elif [ $OPCION == "S" ] || [ $OPCION == "s" ] ; then
-			instalar
+			#Validar todos los datos
+			#Instalar
+			dirs=(${CONF} ${EJECUTABLES} ${MAESTROS} ${NOVEDADES} ${ACEPTADOS} ${RECHAZADOS} ${PROCESADOS} ${SALIDAS})
+			
+			if [ ! -d ${GRUPO} ];
+			then
+				mkdir "${GRUPO}"
+			fi
+
+			for dir in "${!dirs[@]}"; do
+				mkdir "${GRUPO}/${dirs[$dir]}"
+				#echo "$dir-$grupo/${dirs[$dir]}-$USER-$fecha" >> conf/tpconfig.txt
+			done
+
+			echo "La instalación se realizo de forma correcta. Puede revisar los logs de la instalación en ${CONF}${LOG}"
+
 		else 
 			echo -e "Error: El parametro ingresado es erroneo"
 		fi
 	done
 }
 
-instalar(){
-	#Validar todos los datos
-	#Instalar
-	dirs=(${CONF} ${EJECUTABLES} ${MAESTROS} ${NOVEDADES} ${ACEPTADOS} ${RECHAZADOS} ${PROCESADOS} ${SALIDAS})
-			
-	if [ ! -d ${GRUPO} ];
-	then
-		mkdir "${GRUPO}"
-	fi
-
-	for dir in "${!dirs[@]}"; do
-		mkdir "${GRUPO}/${dirs[$dir]}"
-	done
-
-	mkdir ${GRUPO}/${CONF}/LOG
-
-	fecha=$(date '+%d/%m/%Y %H:%M:%S')
-	touch ${GRUPO}/${CONF}${LOG}
-	echo "GRUPO-$GRUPO-$USER-$fecha" >> ${GRUPO}/${CONF}${LOG}
-	echo "CONF-$GRUPO/conf-$USER-$fecha" >> ${GRUPO}/${CONF}${LOG}
-	echo "LOG-$GRUPO/conf/log-$USER-$fecha" >> ${GRUPO}/${CONF}${LOG}
-	for dir in "${!dirs[@]}"; do
-		echo "Generando directorio ${dirs[$dir]}......."
-		echo "${dirs[$dir]}-$GRUPO/${dirs[$dir]}-$USER-$fecha" >> ${GRUPO}/${CONF}${LOG}
-	done
-
-	# Copio los ejecutables
-	echo -e "\n Copiando ejecutables....."
-	cp data/scripts/* "${GRUPO}/${EJECUTABLES}"
-
-	# Copio los archivos maestros
-	echo -e "\n Copiando archivos maestros....."
-	cp data/datos/{Operadores.txt,Sucursales.txt} "${GRUPO}/${MAESTROS}"
-
-	echo "La instalación se realizo de forma correcta. Puede revisar los logs de la instalación en ${CONF}${LOG}"
-}
-
-verificarSistema(){
-	if [ -d "$GRUPO" ]; then 
-		echo -e "\nAplicación ya instalada"
-		echo -e "\nArchivo de configuración"
-		echo "-----------------------------------------"
-		cat ${GRUPO}/${CONF}${LOG};
-		echo "-----------------------------------------"
-		echo "Coloque ./instalar.sh -r para reparar la instación."
-		echo "Se verifico que la aplicación ya estaba instalada" >> ${GRUPO}/${CONF}${LOG}
-	else
-		inicializarVariablesDefault	
-		configurarDirectorios
-	fi
-}
-
-formatearRutas(){
-	#Se encarga de eliminar las barras / colacadas de mas
-	MAESTROS=$(echo $MAESTROS | sed "s/\/*//" | sed -r "s/\/+/\//g")
-	NOVEDADES=$(echo $NOVEDADES | sed "s/\/*//" | sed -r "s/\/+/\//g")
-	ACEPTADOS=$(echo $ACEPTADOS | sed "s/\/*//" | sed -r "s/\/+/\//g")
-	RECHAZADOS=$(echo $RECHAZADOS | sed "s/\/*//" | sed -r "s/\/+/\//g")
-	PROCESADOS=$(echo $PROCESADOS | sed "s/\/*//" | sed -r "s/\/+/\//g")
-	SALIDAS=$(echo $SALIDAS | sed "s/\/*//" | sed -r "s/\/+/\//g")
-	LOG=$(echo $LOG | sed "s/\/*//" | sed -r "s/\/+/\//g")
-}
-
-reparar(){
-	echo "reparado"
-}
-
 clear
-echo "-----------------------------------------"
-echo -e "Bienvenido al sistema de instalacion"
-echo "-----------------------------------------"
-if [ "$1" == "-r" ]; then
-	reparar
-else
-	verificarSistema
-fi
+inicializarVariablesDefault
+configurarDirectorios
 echo
 #Avisar al usuario que se ha terminado de ejecutar el script 
