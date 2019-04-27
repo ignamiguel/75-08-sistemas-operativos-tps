@@ -35,7 +35,7 @@ Para generar el paquete de instalación contenido en el archivo instalable en fo
 
 El output del make es el archivo `grupo03.tgz`
 
-# Logs
+## Logs
 Un log es un registro oficial de eventos durante un periodo de tiempo en particular. 
 Es usado para registrar información sobre cuándo, quién, dónde, qué y por qué un evento ocurre para una aplicación, proceso o dispositivo. 
 A estos 5 valores se los llama estándar W5, por su origen en inglés: when, who, where, what and why
