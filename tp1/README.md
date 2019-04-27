@@ -6,11 +6,11 @@ Documentación del TP 1
 * [sotp2019_1C_Grupox.doc](https://drive.google.com/file/d/0BxKJAFKQWp8UaHZHVmdIR2gyLVI5dkV5ZzlQLURxYU5EYnRF/view?usp=sharing)
 
 ## Ejecución
-Según entendí para ejecutar el proceso desde cero se debe correr:
+Para generar el paquete de instalación contenido en el archivo instalable en formato “.tgz”:
 
-    $ ./instalador.sh
-    $ ./$DIRECTORIO_EJECUTABLES/inicializacion.sh
-    $ ./$DIRECTORIO_EJECUTABLES/start.sh
+    $ make
+
+El output del make es el archivo `grupo03.tfg`
 
 Para descomprimir:
 
@@ -20,3 +20,10 @@ Para descomprimir en una subcarpeta:
 
     $ mkdir subcarpeta
     $ tar -xzf grupo03.tfg -C subcarpeta
+
+Para ejecutar el proceso desde cero se debe correr:
+
+    $ ./instalador.sh
+    $ ./$DIRECTORIO_EJECUTABLES/inicializacion.sh
+    $ ./$DIRECTORIO_EJECUTABLES/start.sh
+

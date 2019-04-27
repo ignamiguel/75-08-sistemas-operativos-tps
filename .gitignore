@@ -1,2 +1,7 @@
 /**/*.tgz
 tp1/tests/ambiente_de_testing
+
+.vagrant
+
+.DS_Store
+**/.DS_Store
