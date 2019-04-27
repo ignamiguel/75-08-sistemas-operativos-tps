@@ -6,7 +6,11 @@ LOG="$CONF/log"
 NOVEDADES_PATH="$TPPATH/NOVEDADES"
 ACEPTADOS_PATH="$TPPATH/ACEPTADOS"
 RECHAZADOS_PATH="$TPPATH/RECHAZADOS"
+OPERADORES="$TPPATH/operadores.txt"
+SUCURSALES="$TPPATH/sucursales.txt"
 CONTADOR=0
+PROCESADOS_PATH="$TPPATH/PROCESADOS"
+PATH_SALIDA=$TPPATH/
 
 log ()
 {
@@ -16,7 +20,7 @@ log ()
 validarNombreTipo()
 {
 	
-	find "$NOVEDADES_PATH" -type f -not -name "Entregas_[0-9][0-9]" |
+	find "$NOVEDADES_PATH" -type f -not -name "Entregas_[0-9][0-9].txt" |
 		while read nombres
 			do
 				if [ -f "$nombres" ]
@@ -85,7 +89,7 @@ validarTrailer()
 		trailer_cantidad_lineas=$doc_numero
 	  done < $f
 	  
-	  let "cp_total=cp_total -trailer_codigo_postal " 
+	  let "cp_total=cp_total -trailer_codigo_postal" 
 	  if [ $lineas -eq $trailer_cantidad_lineas ] && [ $cp_total -eq $trailer_codigo_postal ];
 	  then
 		log "El trailer de $f es correcto"
@@ -95,6 +99,93 @@ validarTrailer()
 	  fi
 	done
 }
+
+generarArchivos()
+{
+	for f in "$ACEPTADOS_PATH"/*
+	do
+	  while IFS=',' read -r  operador pieza nombre doc_tipo doc_numero codigo_postal;
+	  do
+		valido=true	  	
+		# operador existe en archivo operadores
+		if  ! ( grep -q $operador "$OPERADORES" ) ;
+		then
+			mensaje_log="Su operador no se encuentra en el archivo de operadores"
+			valido=false
+		fi
+		#perador codigo postal esta en sucursales
+		if  ! ( grep -q "$operador\|$codigo_postal" "$SUCURSALES" ) ;
+		then
+			mensaje_log="Operador y Codigo Postal invalidos"
+			valido=false
+		fi
+		
+                #Verifico si existe el OP en operadores.txt y si tiene contrato vigente
+                if [ $valido = true ]
+                then
+                        valido=false
+                        while IFS=',' read -r codigo_op nombre_op cuit_op inicio_op fin_op;
+                        do
+                                mes_actual=$(date +"%m")
+                                mes_inicio=$(echo "$inicio_op" | cut -d'/' -f2)
+                                mes_final=$(echo "$fin_op" | cut -d'/' -f2)
+                                
+                                if [ "$operador" == "$codigo_op" ] && [ $mes_inicio -le $mes_actual ] && [ $mes_final -ge $mes_actual ]
+                                then
+                                        log "$operador se encuentra en operadores.txt, en estado activo "
+                                        valido=true
+                             			break;
+                                fi
+                        done < "$OPERADORES"
+                fi
+                
+                # Verifico que la dupla operador-codigo postal exista
+                if [ $valido = true ]
+                then
+                        valido=false
+                        while IFS=',' read -r codigo_suc nombre_suc dom loc pro cod_pos cod_op precio;
+                        do
+                                if [ "$operador" == "cod_op" ] && [ "$codigo_postal" == "$cod_pos" ]
+                                then
+                                        valido=true
+                                        log "$operador-$codigo_postal se encuentra en sucursales.txt"
+                                        break;
+                                fi
+                        done < "$SUCURSALES"
+                fi
+
+		if (( $valido  = true ))
+		then
+			log "La pieza: $pieza del operador: $operador fue aceptada"
+		else
+			log "La pieza: $pieza del operador: $operador fue rechazada: $mensaje_log"
+		fi
+
+		printf -v pieza '%020d' $pieza
+	        nombre=$(echo $nombre | awk '$1=$1')
+		#completo con espacios
+	       	printf -v nombre_pad '%48s' "$nombre"
+		printf -v doc_numero '%011d' $doc_numero
+		archivo=$(basename "$f")
+	        codigo_suc_destino=$(awk -v codigo=$codigo_postal -F ";" '{ if($6 == codigo) {print $1 } }' "$ARCHIVO_SUCURSALES")
+		printf -v codigo_suc_destino '%3s' $codigo_suc_destino
+		suc_destino=$(awk -v codigo=$codigo_postal -F ";" '{ if($6 == codigo) {print $2 } }' "$ARCHIVO_SUCURSALES")
+		printf -v suc_destino '%25s' "$suc_destino"
+	        direccion_suc_destino=$(awk -v codigo=$codigo_postal -F ";" '{if($6 == codigo) {print $3 } }' "$ARCHIVO_SUCURSALES")
+		printf -v direccion_suc_destino '%25s' "$direccion_suc_destino"
+		costo_entrega=$(awk -v codigo=$codigo_postal -F ";" '{ if($6 == codigo) {print $8 } }' "$ARCHIVO_SUCURSALES")
+		printf -v costo_entrega '%06d' $costo_entrega
+		if (( valido  = true ))
+		then
+			echo $pieza"$nombre_pad"$doc_tipo$doc_numero$codigo_postal"$codigo_suc_destino""$suc_destino""$direccion_suc_destino"$costo_entrega$archivo >> $PATH_SALIDA/"Entregas_"$operador
+		else
+			echo $pieza"$nombre_pad"$doc_tipo$doc_numero$codigo_postal"$codigo_suc_destino""$suc_destino""$direccion_suc_destino"$costo_entrega$archivo >> $PATH_SALIDA/"Entregas_Rechazadas"
+		fi
+	done < $f
+	mv $f $PROCESADOS_PATH
+done
+}
+
 
 
 while true
@@ -113,7 +204,10 @@ do
 		validarTrailer
 	fi
 
-	
+	if [ "$(ls -A "$ACEPTADOS_PATH")" ]
+	then	
+		generarArchivos
+	fi
 
 	sleep 1m
 done
