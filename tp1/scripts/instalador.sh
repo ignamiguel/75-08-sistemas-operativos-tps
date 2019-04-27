@@ -48,49 +48,58 @@ configurarDirectorios(){
 	SALIDAS="${SALIDAS:-$SALIDAS_DEFAULT}"
 
 	echo
-	echo
 
-	echo '--------------------------------------------------------------' 
-	echo '| ATENCIÓN!                                                   |'
-	echo '--------------------------------------------------------------' 
-	echo '|Los LOGs del sistema se guardarán en la carpeta /CONF/LOG/   |' 
-	echo '--------------------------------------------------------------' 
-	echo
-	echo
+	dirs=(${CONF} ${EJECUTABLES} ${MAESTROS} ${NOVEDADES} ${ACEPTADOS} ${RECHAZADOS} ${PROCESADOS} ${SALIDAS})
+	validarDirectorios
+	
+	if [[ $error -eq 1 ]]; then 
+		echo -e "\nATENCIÓN!; Se han definido directorios iguales para dos o más carpetas. Recuerden que los mismos"
+		echo "son idividuales y no deben repetirse. Tampoco puede usar un directorio llamado /CONF."
+		echo -e "Por favor comience la instalación nuevamente......\n"
+		configurarDirectorios
+	else 
+		echo
 
-	echo 'Directorios definidos para la Instalación'
-	echo '-------------------------------------------------------------' 
-	echo
-	#Mostrar los directorios configurados
-	echo "Directorio de Ejecutables: ${GRUPO}/${EJECUTABLES}"
-	echo "Directorio de Archivos Maestros: ${GRUPO}/${MAESTROS}"
-	echo "Directorio de las Novedades: ${GRUPO}/${NOVEDADES}"
-	echo "Directorio de las Novedades Aceptadas: ${GRUPO}/${ACEPTADOS}"
-	echo "Directorio de las Novedades Rechazadas: ${GRUPO}/${RECHAZADOS}"
-	echo "Directorio de las Novedades Procesadas: ${GRUPO}/${PROCESADOS}"
-	echo "Directorio de las Archivos de Salida: ${GRUPO}/${SALIDAS}"
-	echo '-------------------------------------------------------------' 
-	echo
+		echo '--------------------------------------------------------------' 
+		echo '| ATENCIÓN!                                                   |'
+		echo '--------------------------------------------------------------' 
+		echo '|Los LOGs del sistema se guardarán en la carpeta /CONF/LOG/   |' 
+		echo '--------------------------------------------------------------' 
+		echo
+		echo
 
-	OPCION="n"
-	while [ $OPCION != "s" ]; do 
-		read -p "Está de acuerdo con esta definición de Directorios? S/N: " OPCION
-		if [ $OPCION == "N" ] || [ $OPCION == "n" ] ; then
-			echo "Instalación CANCELADA"
-			configurarDirectorios
-		elif [ $OPCION == "S" ] || [ $OPCION == "s" ] ; then
-			instalar
-		else 
-			echo -e "Error: El parametro ingresado es erroneo"
-		fi
-	done
+		echo 'Directorios definidos para la Instalación'
+		echo '-------------------------------------------------------------' 
+		echo
+		#Mostrar los directorios configurados
+		echo "Directorio de Ejecutables: ${GRUPO}/${EJECUTABLES}"
+		echo "Directorio de Archivos Maestros: ${GRUPO}/${MAESTROS}"
+		echo "Directorio de las Novedades: ${GRUPO}/${NOVEDADES}"
+		echo "Directorio de las Novedades Aceptadas: ${GRUPO}/${ACEPTADOS}"
+		echo "Directorio de las Novedades Rechazadas: ${GRUPO}/${RECHAZADOS}"
+		echo "Directorio de las Novedades Procesadas: ${GRUPO}/${PROCESADOS}"
+		echo "Directorio de las Archivos de Salida: ${GRUPO}/${SALIDAS}"
+		echo '-------------------------------------------------------------' 
+		echo
+
+		OPCION="n"
+		while [[ $OPCION != "s" ]]; do 
+			read -p "Está de acuerdo con esta definición de Directorios? S/N: " OPCION
+			if [[ $OPCION == "N" ]] || [[ $OPCION == "n" ]] ; then
+				echo "Instalación CANCELADA"
+				configurarDirectorios
+			elif [[ $OPCION == "S" ]] || [[ $OPCION == "s" ]] ; then
+				instalar
+			else 
+				echo -e "Error: El parametro ingresado es erroneo"
+			fi
+		done
+	fi
 }
 
 instalar(){
 	#Validar todos los datos
 	#Instalar
-	dirs=(${CONF} ${EJECUTABLES} ${MAESTROS} ${NOVEDADES} ${ACEPTADOS} ${RECHAZADOS} ${PROCESADOS} ${SALIDAS})
-			
 	if [ ! -d ${GRUPO} ];
 	then
 		mkdir "${GRUPO}"
@@ -113,11 +122,11 @@ instalar(){
 	done
 
 	# Copio los ejecutables
-	echo -e "\n Copiando ejecutables....."
+	echo -e "\nCopiando ejecutables....."
 	cp data/scripts/* "${GRUPO}/${EJECUTABLES}"
 
 	# Copio los archivos maestros
-	echo -e "\n Copiando archivos maestros....."
+	echo -e "\nCopiando archivos maestros....."
 	cp data/datos/{Operadores.txt,Sucursales.txt} "${GRUPO}/${MAESTROS}"
 
 	echo "La instalación se realizo de forma correcta. Puede revisar los logs de la instalación en ${CONF}${LOG}"
@@ -147,6 +156,32 @@ formatearRutas(){
 	PROCESADOS=$(echo $PROCESADOS | sed "s/\/*//" | sed -r "s/\/+/\//g")
 	SALIDAS=$(echo $SALIDAS | sed "s/\/*//" | sed -r "s/\/+/\//g")
 	LOG=$(echo $LOG | sed "s/\/*//" | sed -r "s/\/+/\//g")
+}
+
+validarDirectorios(){
+	#La idea es comparar todos los elementos del vector y contar cuando hay una igualdad
+	#Este contador debe ser igual a la cantidad de elementos del vector
+	#dado que al compararse todos los elementos con todos se comparan los que son iguales
+	
+	seleccionoCONFDIR=0
+	contador=0 #Primer Elemento a comparar
+	error=0
+
+	for dir1 in ${dirs[*]}
+	do
+		for dir2 in ${dirs[*]}
+		do 
+			if [ $dir1 = $dir2 ]; then
+				let contador=contador+1
+			fi
+		done
+	done
+
+	len=${#dirs[@]}
+
+	if [ $contador -gt $len ]; then
+		error=1
+	fi
 }
 
 reparar(){
