@@ -64,7 +64,7 @@ configurarDirectorios(){
 		echo '---------------------------------------------------------------------'
 		echo '| ATENCIÓN!                                                         |'
 		echo '---------------------------------------------------------------------'
-		echo "|Los LOGs del sistema se guardarán en la carpeta ${GRUPO}/CONF/LOG/ "
+		echo "Los LOGs del sistema se guardarán en la carpeta ${GRUPO}/CONF/LOG/ "
 		echo
 		echo
 
@@ -98,10 +98,7 @@ configurarDirectorios(){
 }
 
 instalar(){
-	# Validar todos los datos
-	# Instalar
-	if [ ! -d ${GRUPO} ];
-	then
+	if [ ! -d ${GRUPO} ]; then
 		mkdir "${GRUPO}"
 	fi
 
@@ -111,6 +108,7 @@ instalar(){
 
 	mkdir ${GRUPO}/${CONF}/LOG
 
+	log "--- Iniciando instalación ---"
 	log "[GRUPO] $GRUPO"
 	log "[CONF] $GRUPO/$CONF"
 	log "[LOG] $GRUPO/$CONF/LOG"
@@ -121,11 +119,11 @@ instalar(){
 
 	# Copio los ejecutables
 	echo -e "\nCopiando ejecutables....."
-	cp 'data/scripts/'* "${GRUPO}/${EJECUTABLES}"
+	cp 'originales/scripts/'* "${GRUPO}/${EJECUTABLES}"
 
 	# Copio los archivos maestros
 	echo -e "\nCopiando archivos maestros....."
-	cp 'data/datos/'{Operadores.txt,Sucursales.txt} "${GRUPO}/${MAESTROS}"
+	cp 'originales/datos/'{Operadores.txt,Sucursales.txt} "${GRUPO}/${MAESTROS}"
 
 	echo "La instalación se realizo de forma correcta. Puede revisar los logs de la instalación en ${CONF}${LOG}"
 	log "Instalación exitosa"
@@ -206,7 +204,7 @@ clear
 echo "-----------------------------------------"
 echo -e "Bienvenido al sistema de instalacion"
 echo "-----------------------------------------"
-log "--- Iniciando instalación ---"
+
 if [ "$1" == "-r" ]; then
 	reparar
 else

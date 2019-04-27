@@ -10,7 +10,6 @@ mktmp:
 	mkdir $(compressed_file)/originales/scripts
 	mkdir $(compressed_file)/originales/documentacion
 	mkdir $(compressed_file)/originales/datos
-	mkdir $(compressed_file)/data
 
 copy_scripts:
 # Copia los scripts a la carpeta donde se va a comprimir
@@ -22,7 +21,7 @@ copy_data:
 
 copy_docs:
 # Copia la documentacion a la carpeta donde se va a comprimir
-	cp -r documentacion/* $(compressed_file)/originales/documentacion
+	cp README.md $(compressed_file)/originales/documentacion
 
 create_conf_folder:
 # Crea la carpeta /conf y /conf/log
@@ -31,12 +30,11 @@ create_conf_folder:
 
 copy_readme:
 # Copia el readme a la raiz para que el usuario la pueda ver facilmente
-	cp documentacion/Readme.md $(compressed_file)/Readme.md
+	cp README.md $(compressed_file)/README.md
 
 copy_installer:
 # Copia el instalador a la raiz para que el usuario lo encuentre facilmente
 	cp scripts/instalador.sh $(compressed_file)/instalador.sh
-	cp -r scripts/data/* $(compressed_file)/data
 
 compress:
 # Comprime los archivos
