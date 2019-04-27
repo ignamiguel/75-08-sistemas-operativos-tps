@@ -10,6 +10,7 @@ mktmp:
 	mkdir $(compressed_file)/originales/scripts
 	mkdir $(compressed_file)/originales/documentacion
 	mkdir $(compressed_file)/originales/datos
+	mkdir $(compressed_file)/data
 
 copy_scripts:
 # Copia los scripts a la carpeta donde se va a comprimir
@@ -35,6 +36,7 @@ copy_readme:
 copy_installer:
 # Copia el instalador a la raiz para que el usuario lo encuentre facilmente
 	cp scripts/instalador.sh $(compressed_file)/instalador.sh
+	cp -r scripts/data/* $(compressed_file)/data
 
 compress:
 # Comprime los archivos
