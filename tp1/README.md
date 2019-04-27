@@ -43,10 +43,10 @@ A estos 5 valores se los llama estándar W5, por su origen en inglés: when, who
 En el programa se sigue el siguiente esquema:
 
 ```txt
-Fecha (when)       | Usuario (who) | Proceso (why)   | Mensaje (what & where)
-2019-04-27 20:38:40 ignacio          Instalación      --- Iniciando instalación ---
-2019-04-27 20:38:40 ignacio          Instalación      [GRUPO] /vagrant/tp1/nacho/grupo3 vagrant
-2019-04-27 20:38:40 ignacio          Instalación      [CONF] /vagrant/tp1/nacho/grupo3/conf-vagrant
+Fecha (when)           | Usuario (who) | Proceso (why)   | Mensaje (what & where)
+2019-04-27 21:17:42.476 ignacio         Instalación       --- Iniciando instalación ---
+2019-04-27 21:17:42.478 ignacio         Instalación       [GRUPO] /vagrant/tp1/nacho/grupo3 vagrant
+2019-04-27 21:17:42.479 ignacio         Instalación       [CONF] /vagrant/tp1/nacho/grupo3/conf-vagrant
 ...
 
 ```
