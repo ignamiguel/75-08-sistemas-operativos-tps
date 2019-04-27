@@ -162,8 +162,7 @@ validarDirectorios(){
 	#La idea es comparar todos los elementos del vector y contar cuando hay una igualdad
 	#Este contador debe ser igual a la cantidad de elementos del vector
 	#dado que al compararse todos los elementos con todos se comparan los que son iguales
-	
-	seleccionoCONFDIR=0
+
 	contador=0 #Primer Elemento a comparar
 	error=0
 
@@ -171,7 +170,7 @@ validarDirectorios(){
 	do
 		for dir2 in ${dirs[*]}
 		do 
-			if [ $dir1 = $dir2 ]; then
+			if [[ $dir1 = $dir2  || $dir1 = "conf" ]]; then
 				let contador=contador+1
 			fi
 		done
