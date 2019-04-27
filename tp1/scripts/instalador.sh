@@ -1,6 +1,8 @@
 #!/bin/bash
 
 GRUPO=~/grupo03
+CONF="CONF"
+LOG="/LOG/instalacion.log"
 
 inicializarVariablesDefault(){	
 	EJECUTABLES_DEFAULT="ejecutables"
@@ -13,7 +15,6 @@ inicializarVariablesDefault(){
 }
 
 configurarDirectorios(){
-	clear
 	echo '-----------' 
 	echo 'Instalación'
 	echo '-----------' 
@@ -23,7 +24,7 @@ configurarDirectorios(){
 	echo '-------------------------------------------------------------' 
 	echo
 	# Utilizo un array asociativo para después poder iterar los directorios
-	declare -A dirs
+	#declare -A dirs
 	#leer el dato del teclado y guardarlo en la variable de directorio correspondiente
 	read -p "Defina el directorio de Ejecutables (${GRUPO}/${EJECUTABLES_DEFAULT}): " EJECUTABLES #dirs[ejecutables]
 	EJECUTABLES="${EJECUTABLES:-$EJECUTABLES_DEFAULT}"
@@ -49,11 +50,11 @@ configurarDirectorios(){
 	echo
 	echo
 
-	echo '-------------------------------------------------------------' 
-	echo '| ATENCIÓN!                                                 |'
-	echo '-------------------------------------------------------------' 
-	echo '|Los LOGs del sistema se guardarán en la carpeta /CONF/LOG. |' 
-	echo '-------------------------------------------------------------' 
+	echo '--------------------------------------------------------------' 
+	echo '| ATENCIÓN!                                                   |'
+	echo '--------------------------------------------------------------' 
+	echo '|Los LOGs del sistema se guardarán en la carpeta /CONF/LOG/   |' 
+	echo '--------------------------------------------------------------' 
 	echo
 	echo
 
@@ -71,40 +72,91 @@ configurarDirectorios(){
 	echo '-------------------------------------------------------------' 
 	echo
 
-	read -p "Está de acuerdo con esta definición de Directorios? S/N: " CONFIRMAR
-	if [ $CONFIRMAR == "N" ] || [ $CONFIRMAR == "n" ] ; then
-		echo "Instalación CANCELADA"
+	OPCION="n"
+	while [ $OPCION != "s" ]; do 
+		read -p "Está de acuerdo con esta definición de Directorios? S/N: " OPCION
+		if [ $OPCION == "N" ] || [ $OPCION == "n" ] ; then
+			echo "Instalación CANCELADA"
+			configurarDirectorios
+		elif [ $OPCION == "S" ] || [ $OPCION == "s" ] ; then
+			instalar
+		else 
+			echo -e "Error: El parametro ingresado es erroneo"
+		fi
+	done
+}
+
+instalar(){
+	#Validar todos los datos
+	#Instalar
+	dirs=(${CONF} ${EJECUTABLES} ${MAESTROS} ${NOVEDADES} ${ACEPTADOS} ${RECHAZADOS} ${PROCESADOS} ${SALIDAS})
+			
+	if [ ! -d ${GRUPO} ];
+	then
+		mkdir "${GRUPO}"
+	fi
+
+	for dir in "${!dirs[@]}"; do
+		mkdir "${GRUPO}/${dirs[$dir]}"
+	done
+
+	mkdir ${GRUPO}/${CONF}/LOG
+
+	fecha=$(date '+%d/%m/%Y %H:%M:%S')
+	touch ${GRUPO}/${CONF}${LOG}
+	echo "GRUPO-$GRUPO-$USER-$fecha" >> ${GRUPO}/${CONF}${LOG}
+	echo "CONF-$GRUPO/conf-$USER-$fecha" >> ${GRUPO}/${CONF}${LOG}
+	echo "LOG-$GRUPO/conf/log-$USER-$fecha" >> ${GRUPO}/${CONF}${LOG}
+	for dir in "${!dirs[@]}"; do
+		echo "${dirs[$dir]}-$GRUPO/${dirs[$dir]}-$USER-$fecha" >> ${GRUPO}/${CONF}${LOG}
+	done
+
+	# Copio los ejecutables
+	cp data/scripts/* "${GRUPO}/${EJECUTABLES}"
+
+	# Copio los archivos maestros
+	cp data/datos/{Operadores.txt,Sucursales.txt} "${GRUPO}/${MAESTROS}"
+
+	echo "La instalación se realizo de forma correcta. Puede revisar los logs de la instalación en ${CONF}${LOG}"
+}
+
+verificarSistema(){
+	if [ -d "$GRUPO" ]; then 
+		echo -e "\nAplicación ya instalada"
+		echo -e "\nArchivo de configuración"
+		echo "-----------------------------------------"
+		cat ${GRUPO}/${CONF}${LOG};
+		echo "-----------------------------------------"
+		echo "Se verifico que la aplicación ya estaba instalada" >> ${GRUPO}/${CONF}${LOG}
+	else
+		inicializarVariablesDefault	
 		configurarDirectorios
-	elif [ $CONFIRMAR == "S" ] || [ $CONFIRMAR == "s" ] ; then
-		#Validar todos los datos
-		echo "Se instalo todo"
-		#Instalar
-				
-		# Guardo dirs y otras carpetas en conf/tpconfig.txt
-		grupo=$( cd "$(dirname "$BASH_SOURCE")" >/dev/null 2>&1 && pwd )
-		fecha=$(date '+%d/%m/%Y %H:%M:%S')
-		echo "grupo-$grupo-$USER-$fecha" > conf/tpconfig.txt
-		echo "conf-$grupo/conf-$USER-$fecha" >> conf/tpconfig.txt
-		echo "log-$grupo/conf/log-$USER-$fecha" >> conf/tpconfig.txt
-		for dir in "${!dirs[@]}"; do
-			echo "$dir-$grupo/${dirs[$dir]}-$USER-$fecha" >> conf/tpconfig.txt
-		done
-
-		# Creo los directorios
-		mkdir ${dirs[@]}
-
-		# Copio los scripts
-		cp originales/scripts/* ${dirs[ejecutables]}
-
-		# Copio los archivos maestros
-		cp originales/datos/{Operadores.txt,Sucursales.txt} ${dirs[maestros]}
-
-	else 
-		echo -e "Error: El parametro ingresado es erroneo"
 	fi
 }
 
-inicializarVariablesDefault
-configurarDirectorios
+formatearRutas(){
+	#Se encarga de eliminar las barras / colacadas de mas
+	MAESTROS=$(echo $MAESTROS | sed "s/\/*//" | sed -r "s/\/+/\//g")
+	NOVEDADES=$(echo $NOVEDADES | sed "s/\/*//" | sed -r "s/\/+/\//g")
+	ACEPTADOS=$(echo $ACEPTADOS | sed "s/\/*//" | sed -r "s/\/+/\//g")
+	RECHAZADOS=$(echo $RECHAZADOS | sed "s/\/*//" | sed -r "s/\/+/\//g")
+	PROCESADOS=$(echo $PROCESADOS | sed "s/\/*//" | sed -r "s/\/+/\//g")
+	SALIDAS=$(echo $SALIDAS | sed "s/\/*//" | sed -r "s/\/+/\//g")
+	LOG=$(echo $LOG | sed "s/\/*//" | sed -r "s/\/+/\//g")
+}
+
+reparar(){
+	echo "reparado"
+}
+
+clear
+echo "-----------------------------------------"
+echo -e "Bienvenido al sistema de instalacion"
+echo "-----------------------------------------"
+if [ "$1" == "-r" ]; then
+	reparar
+else
+	verificarSistema
+fi
 echo
 #Avisar al usuario que se ha terminado de ejecutar el script 
