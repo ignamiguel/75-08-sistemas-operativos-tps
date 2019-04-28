@@ -1,5 +1,17 @@
 #!/bin/bash
 
+RED='\033[0;31m'
+GREEN='\033[1;32m'
+NC='\033[0m' # No Color
+
+printTestOk() {
+    echo -e "$1 ${GREEN}OK${NC}"
+}
+
+printTestError() {
+    echo -e "$1 ${RED}ERROR${NC}"
+}
+
 # ---------------------------------------------------------------------
 # tests_inicializador.sh
 # ---------------------------------------------------------------------
@@ -28,10 +40,11 @@ cd tests/ambiente_de_testing
 (. dir_scripts/inicializacion.sh ) > /dev/null
 
 # 4) Valido la salida
+TEST_NAME="Test 01 del inicializador"
 if [ $? -eq 0 ]; then
-    echo "Test 01 del inicializador OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 01 del inicializador."
+    1>&2 printTestError "$TEST_NAME"
 fi
 
 # 5) Finalizo el proceso
@@ -42,7 +55,6 @@ fi
 
 # 6) Vuelvo al directorio original
 cd ../../
-
 
 
 # ---------------------------------------------------------------------
@@ -65,10 +77,11 @@ cd tests/ambiente_de_testing
 ) > /dev/null 2> /dev/null
 
 # 4) Valido la salida
+TEST_NAME="Test 02 del inicializador"
 if [ $? -eq 1 ]; then
-    echo "Test 02 del inicializador OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 02 del inicializador."
+    1>&2 printTestError "$TEST_NAME"
 fi
 
 # 5) Finalizo el proceso
@@ -79,7 +92,6 @@ fi
 
 # 6) Vuelvo al directorio original
 cd ../../
-
 
 
 # ---------------------------------------------------------------------
@@ -102,15 +114,15 @@ rm -R dir_salida
 (. dir_scripts/inicializacion.sh) > /dev/null 2> /dev/null
 
 # 5) Valido la salida
+TEST_NAME="Test 03 del inicializador"
 if [ $? -eq 2 ]; then
-    echo "Test 03 del inicializador OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 03 del inicializador."
+    1>&2 printTestError "$TEST_NAME"
 fi
 
 # 7) Vuelvo al directorio original
 cd ../../
-
 
 
 # ---------------------------------------------------------------------
@@ -133,15 +145,15 @@ rm dir_scripts/stop.sh
 (. dir_scripts/inicializacion.sh) > /dev/null 2> /dev/null
 
 # 5) Valido la salida
+TEST_NAME="Test 04 del inicializador"
 if [ $? -eq 3 ]; then
-    echo "Test 04 del inicializador OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 04 del inicializador."
+    1>&2 printTestError "$TEST_NAME"
 fi
 
 # 6) Vuelvo al directorio original
 cd ../../
-
 
 
 # ---------------------------------------------------------------------
@@ -164,10 +176,11 @@ chmod 600 dir_scripts/proceso.sh
 salida=$(. dir_scripts/inicializacion.sh | grep -m 1 'Se corrigen los permisos sobre el script .*proceso.sh para poder leerlo y ejecutarlo')
 
 # 5) Valido la salida
+TEST_NAME="Test 05 del inicializador"
 if [ ! -z "$salida" ] && [ $? -eq 0 ]; then
-    echo "Test 05 del inicializador OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 05 del inicializador."
+    1>&2 printTestError "$TEST_NAME"
 fi
 
 # 6) Finalizo el proceso
@@ -201,10 +214,11 @@ rm dir_maestros/Operadores.txt
 (. dir_scripts/inicializacion.sh) 2> /dev/null > /dev/null
 
 # 5) Valido la salida
+TEST_NAME="Test 06 del inicializador"
 if [ $? -eq 4 ]; then
-    echo "Test 06 del inicializador OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 06 del inicializador."
+    1>&2 printTestError "$TEST_NAME"
 fi
 
 # 6) Vuelvo al directorio original
@@ -232,10 +246,11 @@ chmod 000 dir_maestros/Sucursales.txt
 salida=$(. dir_scripts/inicializacion.sh | grep -m 1 'Se corrigen los permisos sobre el archivo maestro .*Sucursales\.txt para poder leerlo')
 
 # 5) Valido la salida
+TEST_NAME="Test 07 del inicializador"
 if [ ! -z "$salida" ] && [ $? -eq 0 ]; then
-    echo "Test 07 del inicializador OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 07 del inicializador."
+    1>&2 printTestError "$TEST_NAME"
 fi
 
 # 7) Finalizo el proceso

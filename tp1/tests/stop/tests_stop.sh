@@ -1,5 +1,17 @@
 #!/bin/bash
 
+RED='\033[0;31m'
+GREEN='\033[1;32m'
+NC='\033[0m' # No Color
+
+printTestOk() {
+    echo -e "$1 ${GREEN}OK${NC}"
+}
+
+printTestError() {
+    echo -e "$1 ${RED}ERROR${NC}"
+}
+
 # ---------------------------------------------------------------------
 # tests_stop.sh
 # ---------------------------------------------------------------------
@@ -31,15 +43,15 @@ cd tests/ambiente_de_testing
 ) > /dev/null
 
 # 4) Valido la salida
+TEST_NAME="Test 01: stop con éxito"
 if [ $? -eq 0 ]; then
-    echo "Test 01 de stop OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 01 de stop."
+    1>&2 printTestError "$TEST_NAME"
 fi
 
 # 5) Vuelvo al directorio original
 cd ../../
-
 
 
 # ---------------------------------------------------------------------
@@ -63,15 +75,15 @@ cd tests/ambiente_de_testing
 ) > /dev/null 2> /dev/null
 
 # 4) Valido la salida
+TEST_NAME="Test 02: stop"
 if [ $? -eq 1 ]; then
-    echo "Test 02 de stop OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 02 de stop."
+    1>&2 printTestError "$TEST_NAME"
 fi
 
 # 5) Vuelvo al directorio original
 cd ../../
-
 
 
 # ---------------------------------------------------------------------
@@ -93,10 +105,11 @@ cd tests/ambiente_de_testing
 ) > /dev/null 2> /dev/null
 
 # 4) Valido la salida
+TEST_NAME="Test 03: stop"
 if [ $? -eq 1 ]; then
-    echo "Test 03 de stop OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 03 de stop."
+    1>&2 printTestError "$TEST_NAME"
 fi
 
 # 5) Vuelvo al directorio original

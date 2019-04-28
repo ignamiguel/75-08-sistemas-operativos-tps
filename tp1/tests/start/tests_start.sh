@@ -1,5 +1,17 @@
 #!/bin/bash
 
+RED='\033[0;31m'
+GREEN='\033[1;32m'
+NC='\033[0m' # No Color
+
+printTestOk() {
+    echo -e "$1 ${GREEN}OK${NC}"
+}
+
+printTestError() {
+    echo -e "$1 ${RED}ERROR${NC}"
+}
+
 # ---------------------------------------------------------------------
 # tests_start.sh
 # ---------------------------------------------------------------------
@@ -32,10 +44,11 @@ cd tests/ambiente_de_testing
 ) > /dev/null
 
 # 4) Valido la salida
+TEST_NAME="Test 01: start básico con éxito"
 if [ $? -eq 0 ]; then
-    echo "Test 01 de start OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 01 de start."
+    1>&2 printTestError "$TEST_NAME"
 fi
 
 # 5) Finalizo el proceso
@@ -46,7 +59,6 @@ fi
 
 # 6) Vuelvo al directorio original
 cd ../../
-
 
 
 # ---------------------------------------------------------------------
@@ -66,10 +78,11 @@ cd tests/ambiente_de_testing
 salida=$(. dir_scripts/inicializacion.sh | grep -m 1 'Inicia el comando start.sh')
 
 # 4) Valido la salida
+TEST_NAME="Test 02: start"
 if [ ! -z "$salida" ]; then
-    echo "Test 02 de start OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 02 de start."
+    1>&2 printTestError "$TEST_NAME"
 fi
 
 # 5) Vuelvo al directorio original

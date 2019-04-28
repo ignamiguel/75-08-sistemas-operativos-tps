@@ -1,5 +1,17 @@
 #!/bin/bash
 
+RED='\033[0;31m'
+GREEN='\033[1;32m'
+NC='\033[0m' # No Color
+
+printTestOk() {
+    echo -e "$1 ${GREEN}OK${NC}"
+}
+
+printTestError() {
+    echo -e "$1 ${RED}ERROR${NC}"
+}
+
 # ---------------------------------------------------------------------
 # tests_instalador.sh
 # ---------------------------------------------------------------------
@@ -22,11 +34,12 @@ tests/crear_ambiente.sh
 cd tests/ambiente_de_testing
 
 # 2) Instalo con un camino feliz. Tiro el stdout porque no me interesa
-./instalador.sh < ../inicializador/instalacion_feliz.txt > /dev/null
+./instalador.sh < ../instalador/instalacion_feliz.txt > /dev/null
 
 # 3) Valido la salida
+TEST_NAME="Test 01: instalación básica con éxito"
 if [ $? -eq 0 ]; then
-    echo "Test 01 del inicializador OK."
+    printTestOk "$TEST_NAME"
 else
-    1>&2 echo "Falló el test 01 del inicializador."
+    1>&2 printTestError "$TEST_NAME"
 fi

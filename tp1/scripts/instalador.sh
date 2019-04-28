@@ -108,7 +108,7 @@ configurarDirectorios(){
 		echo
 
 		OPCION="n"
-		while [[ $OPCION != "s" ]]; do
+		while [[ $OPCION != "S" ]] && [[ $OPCION != "s" ]]; do
 			echo "¿Está de acuerdo con esta definición de Directorios? s/n: " 2>&1 | tee -a $LOG_FILE
 			read OPCION
 			echo $OPCION >> $LOG_FILE

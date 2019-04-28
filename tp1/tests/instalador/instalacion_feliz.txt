@@ -5,4 +5,4 @@ dir_aceptados
 dir_rechazados
 dir_procesados
 dir_salida
-S
+s
