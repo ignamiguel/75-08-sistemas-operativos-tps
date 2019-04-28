@@ -1,6 +1,6 @@
 /**/*.tgz
 tp1/tests/ambiente_de_testing
-
+!tp1/download/grupo03.tgz
 .vagrant
 
 .DS_Store
