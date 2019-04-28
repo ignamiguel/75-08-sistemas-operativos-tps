@@ -97,19 +97,20 @@ configurarDirectorios(){
 		echo '---------------------------------------------------------------------'  2>&1 | tee -a $LOG_FILE
 		echo
 		# Mostrar los directorios configurados
-		echo "[1/7] Directorio de Ejecutables: [${GRUPO}/${EJECUTABLES}]" 2>&1 | tee -a $LOG_FILE
-		echo "[2/7] Directorio de Archivos Maestros: [${GRUPO}/${MAESTROS}]" 2>&1 | tee -a $LOG_FILE
-		echo "[3/7] Directorio de las Novedades: [${GRUPO}/${NOVEDADES}]" 2>&1 | tee -a $LOG_FILE
-		echo "[4/7] Directorio de las Novedades Aceptadas: [${GRUPO}/${ACEPTADOS}]" 2>&1 | tee -a $LOG_FILE
-		echo "[5/7] Directorio de las Novedades Rechazadas: [${GRUPO}/${RECHAZADOS}]" 2>&1 | tee -a $LOG_FILE
-		echo "[6/7] Directorio de las Novedades Procesadas: [${GRUPO}/${PROCESADOS}]" 2>&1 | tee -a $LOG_FILE
-		echo "[7/7] Directorio de las Archivos de Salida: [${GRUPO}/${SALIDAS}]"  2>&1 | tee -a $LOG_FILE
-		echo '---------------------------------------------------------------------'  2>&1 | tee -a $LOG_FILE
+		echo "[1/7] Librería de ejecutables: [${GRUPO}/${EJECUTABLES}]" 2>&1 | tee -a $LOG_FILE
+		echo "[2/7] Repositorio de archivos Maestros: [${GRUPO}/${MAESTROS}]" 2>&1 | tee -a $LOG_FILE
+		echo "[3/7] Directorio para el arribo de novedades: [${GRUPO}/${NOVEDADES}]" 2>&1 | tee -a $LOG_FILE
+		echo "[4/7] Directorio para las novedades aceptadas: [${GRUPO}/${ACEPTADOS}]" 2>&1 | tee -a $LOG_FILE
+		echo "[5/7] Directorio para las novedades rechazadas: [${GRUPO}/${RECHAZADOS}]" 2>&1 | tee -a $LOG_FILE
+		echo "[6/7] Directorio para las novedades procesadas: [${GRUPO}/${PROCESADOS}]" 2>&1 | tee -a $LOG_FILE
+		echo "[7/7] Directorio para los archivos de salida: [${GRUPO}/${SALIDAS}]" 2>&1 | tee -a $LOG_FILE
+		echo '---------------------------------------------------------------------' 2>&1 | tee -a $LOG_FILE
+		echo "Estado de la instalación: LISTA" 2>&1 | tee -a $LOG_FILE
 		echo
 
 		OPCION="n"
 		while [[ $OPCION != "S" ]] && [[ $OPCION != "s" ]]; do
-			echo "¿Está de acuerdo con esta definición de Directorios? s/n: " 2>&1 | tee -a $LOG_FILE
+			echo "¿Confirma la instalación? s/n: " 2>&1 | tee -a $LOG_FILE
 			read OPCION
 			echo $OPCION >> $LOG_FILE
 			if [[ $OPCION == "N" ]] || [[ $OPCION == "n" ]] ; then
@@ -132,12 +133,16 @@ instalar(){
 	if [ ! -f $CONFIG_FILE ]; then
     echo "Creando el archivo de configuración: $CONFIG_FILE" 2>&1 | tee -a $LOG_FILE
     touch ${CONFIG_FILE}
+		echo "GRUPO=$GRUPO" >> ${CONFIG_FILE}
+		echo "CONF_DIR=$CONF_DIR" >> ${CONFIG_FILE}
+		echo "LOG_DIR=$LOG_DIR" >> ${CONFIG_FILE}
   fi
 
 	for dir in "${!dirs[@]}"; do
 		if [ ! -d "${GRUPO}/${dirs[$dir]}" ]; then
 			echo "Generando directorio ${dirs[$dir]}..." 2>&1 | tee -a $LOG_FILE
 			mkdir "${GRUPO}/${dirs[$dir]}"
+			echo "${dirs[$dir]}=${GRUPO}/${dirs[$dir]}" >> ${CONFIG_FILE}
 		else
 			echo "¡El directorio ${dirs[$dir]} ya existe!" 2>&1 | tee -a $LOG_FILE
 		fi
