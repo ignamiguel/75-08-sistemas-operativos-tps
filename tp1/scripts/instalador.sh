@@ -1,9 +1,12 @@
 #!/bin/bash
 
-# GRUPO=~/grupo03
-GRUPO=$(pwd)/grupo3
-CONF="CONF"
-LOG="/LOG/instalacion.log"
+GRUPO=$(pwd)
+CONF="conf"
+CONF_DIR="${GRUPO}/${CONF}"
+LOG_DIR="${CONF_DIR}/log"
+CONFIG_FILE="${CONF_DIR}/tpconfig.txt"
+LOG_FILE="${LOG_DIR}/instalacion.log"
+
 
 inicializarVariablesDefault(){	
 	EJECUTABLES_DEFAULT="ejecutables"
@@ -50,12 +53,12 @@ configurarDirectorios(){
 
 	echo
 
-	dirs=(${CONF} ${EJECUTABLES} ${MAESTROS} ${NOVEDADES} ${ACEPTADOS} ${RECHAZADOS} ${PROCESADOS} ${SALIDAS})
+	dirs=(${EJECUTABLES} ${MAESTROS} ${NOVEDADES} ${ACEPTADOS} ${RECHAZADOS} ${PROCESADOS} ${SALIDAS})
 	validarDirectorios
 	
 	if [[ $error -eq 1 ]]; then 
 		echo -e "\nATENCIÓN!; Se han definido directorios iguales para dos o más carpetas. Recuerden que los mismos"
-		echo "son idividuales y no deben repetirse. Tampoco puede usar un directorio llamado /CONF."
+		echo "son idividuales y no deben repetirse. Tampoco puede usar un directorio llamado \"${CONF}\"."
 		echo -e "Por favor comience la instalación nuevamente......\n"
 		configurarDirectorios
 	else 
@@ -64,7 +67,7 @@ configurarDirectorios(){
 		echo '---------------------------------------------------------------------'
 		echo '| ATENCIÓN!                                                         |'
 		echo '---------------------------------------------------------------------'
-		echo "Los LOGs del sistema se guardarán en la carpeta ${GRUPO}/CONF/LOG/ "
+		echo "Los logs del sistema se guardarán en la carpeta ${LOG_DIR}"
 		echo
 		echo
 
@@ -84,7 +87,7 @@ configurarDirectorios(){
 
 		OPCION="n"
 		while [[ $OPCION != "s" ]]; do 
-			read -p "Está de acuerdo con esta definición de Directorios? S/N: " OPCION
+			read -p "Está de acuerdo con esta definición de Directorios? s/n: " OPCION
 			if [[ $OPCION == "N" ]] || [[ $OPCION == "n" ]] ; then
 				echo "Instalación CANCELADA"
 				configurarDirectorios
@@ -103,15 +106,19 @@ instalar(){
 	fi
 
 	for dir in "${!dirs[@]}"; do
-		mkdir "${GRUPO}/${dirs[$dir]}"
+		if [ ! -d "${GRUPO}/${dirs[$dir]}" ]; then
+			mkdir "${GRUPO}/${dirs[$dir]}"
+		fi
 	done
 
-	mkdir ${GRUPO}/${CONF}/LOG
+	if [ ! -d ${LOG_DIR} ]; then
+		mkdir "${LOG_DIR}"
+	fi
 
 	log "--- Iniciando instalación ---"
 	log "[GRUPO] $GRUPO"
-	log "[CONF] $GRUPO/$CONF"
-	log "[LOG] $GRUPO/$CONF/LOG"
+	log "[CONF_DIR] $CONF_DIR"
+	log "[LOG_DIR] $LOG_DIR"
 	for dir in "${!dirs[@]}"; do
 		echo "Generando directorio ${dirs[$dir]}......."
 		log "[${dirs[$dir]}] $GRUPO/${dirs[$dir]}"
@@ -125,19 +132,19 @@ instalar(){
 	echo -e "\nCopiando archivos maestros....."
 	cp 'originales/datos/'{Operadores.txt,Sucursales.txt} "${GRUPO}/${MAESTROS}"
 
-	echo "La instalación se realizo de forma correcta. Puede revisar los logs de la instalación en ${CONF}${LOG}"
+	echo "La instalación se realizo de forma correcta. Puede revisar los logs de la instalación en \"${LOG_FILE}\""
 	log "Instalación exitosa"
 }
 
 verificarSistema(){
-	if [ -d "$GRUPO" ]; then 
+	if [ -f "$CONFIG_FILE" ]; then 
 		echo -e "\nAplicación ya instalada"
 		echo -e "\nArchivo de configuración"
 		echo "-----------------------------------------"
-		cat ${GRUPO}/${CONF}${LOG};
+		cat $CONFIG_FILE
 		echo "-----------------------------------------"
-		echo "Coloque ./instalar.sh -r para reparar la instación."
-		echo "Se verifico que la aplicación ya estaba instalada" >> ${GRUPO}/${CONF}${LOG}
+		echo "Coloque ./instalador.sh -r para reparar la instación."
+		echo "Se verifico que la aplicación ya estaba instalada" >> $LOG_FILE
 	else
 		inicializarVariablesDefault	
 		configurarDirectorios
@@ -152,7 +159,7 @@ formatearRutas(){
 	RECHAZADOS=$(echo $RECHAZADOS | sed "s/\/*//" | sed -r "s/\/+/\//g")
 	PROCESADOS=$(echo $PROCESADOS | sed "s/\/*//" | sed -r "s/\/+/\//g")
 	SALIDAS=$(echo $SALIDAS | sed "s/\/*//" | sed -r "s/\/+/\//g")
-	LOG=$(echo $LOG | sed "s/\/*//" | sed -r "s/\/+/\//g")
+	LOG_DIR=$(echo $LOG_DIR | sed "s/\/*//" | sed -r "s/\/+/\//g")
 }
 
 validarDirectorios(){
@@ -167,7 +174,7 @@ validarDirectorios(){
 	do
 		for dir2 in ${dirs[*]}
 		do 
-			if [[ $dir1 = $dir2  || $dir1 = "conf" ]]; then
+			if [[ $dir1 = $dir2  || $dir1 = $CONF ]]; then
 				let contador=contador+1
 			fi
 		done
@@ -186,7 +193,6 @@ reparar() {
 
 log() {
 	# Chequeo si el archivo existe, si no, lo creo
-	LOG_FILE=${GRUPO}/${CONF}${LOG}
   if [ ! -f $LOG_FILE ]; then
     echo "Creando el archivo de log: $LOG_FILE"
     touch ${LOG_FILE}
