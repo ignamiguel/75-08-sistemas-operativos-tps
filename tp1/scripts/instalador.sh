@@ -7,7 +7,6 @@ LOG_DIR="${CONF_DIR}/log"
 CONFIG_FILE="${CONF_DIR}/tpconfig.txt"
 LOG_FILE="${LOG_DIR}/instalacion.log"
 
-
 inicializarVariablesDefault(){	
 	EJECUTABLES_DEFAULT="ejecutables"
 	MAESTROS_DEFAULT="maestros"
@@ -134,15 +133,21 @@ instalar(){
     echo "Creando el archivo de configuración: $CONFIG_FILE" 2>&1 | tee -a $LOG_FILE
     touch ${CONFIG_FILE}
 		echo "GRUPO=$GRUPO" >> ${CONFIG_FILE}
-		echo "CONF_DIR=$CONF_DIR" >> ${CONFIG_FILE}
-		echo "LOG_DIR=$LOG_DIR" >> ${CONFIG_FILE}
+		echo "CONF=$CONF_DIR" >> ${CONFIG_FILE}
+		echo "LOGS=$LOG_DIR" >> ${CONFIG_FILE}
+		echo "SCRIPTS=${GRUPO}/${EJECUTABLES}" >> ${CONFIG_FILE}
+		echo "MAESTROS=${GRUPO}/${MAESTROS}" >> ${CONFIG_FILE}
+		echo "NOVEDADES=${GRUPO}/${NOVEDADES}" >> ${CONFIG_FILE}
+		echo "ACEPTADOS=${GRUPO}/${ACEPTADOS}" >> ${CONFIG_FILE}
+		echo "RECHAZADOS=${GRUPO}/${RECHAZADOS}" >> ${CONFIG_FILE}
+		echo "PROCESADOS=${GRUPO}/${PROCESADOS}" >> ${CONFIG_FILE}
+		echo "SALIDAS=${GRUPO}/${SALIDAS}" >> ${CONFIG_FILE}
   fi
 
 	for dir in "${!dirs[@]}"; do
 		if [ ! -d "${GRUPO}/${dirs[$dir]}" ]; then
 			echo "Generando directorio ${dirs[$dir]}..." 2>&1 | tee -a $LOG_FILE
 			mkdir "${GRUPO}/${dirs[$dir]}"
-			echo "${dirs[$dir]}=${GRUPO}/${dirs[$dir]}" >> ${CONFIG_FILE}
 		else
 			echo "¡El directorio ${dirs[$dir]} ya existe!" 2>&1 | tee -a $LOG_FILE
 		fi
@@ -163,14 +168,67 @@ instalar(){
 	echo  -e "\nLa instalación se realizo de forma correcta. Puede revisar los logs de la instalación en \"${LOG_FILE}\"" 2>&1 | tee -a $LOG_FILE
 }
 
+verificarInstalacion() {
+	echo "Verificando la instalación..." 2>&1 | tee -a $LOG_FILE
+	echo 
+	INSTA_GRUPO="$(getConfigValue GRUPO)"
+	INSTA_CONF="$(getConfigValue CONF)"
+	INSTA_LOGS="$(getConfigValue LOGS)"
+	INSTA_SCRIPTS="$(getConfigValue SCRIPTS)"
+	INSTA_MAESTROS="$(getConfigValue MAESTROS)"
+	INSTA_NOVEDADES="$(getConfigValue NOVEDADES)"
+	INSTA_ACEPTADOS="$(getConfigValue ACEPTADOS)"
+	INSTA_RECHAZADOS="$(getConfigValue RECHAZADOS)"
+	INSTA_PROCESADOS="$(getConfigValue PROCESADOS)"
+	INSTA_SALIDAS="$(getConfigValue SALIDAS)"
+
+	existeElDirectorio $INSTA_GRUPO "GRUPO"
+	existeElDirectorio $INSTA_CONF "CONF"
+	existeElDirectorio $INSTA_LOGS "LOGS"
+	existeElDirectorio $INSTA_SCRIPTS "SCRIPTS"
+	existeElDirectorio $INSTA_MAESTROS "MAESTROS"
+	existeElDirectorio $INSTA_NOVEDADES "NOVEDADES"
+	existeElDirectorio $INSTA_ACEPTADOS "ACEPTADOS"
+	existeElDirectorio $INSTA_RECHAZADOS "RECHAZADOS"
+	existeElDirectorio $INSTA_PROCESADOS "PROCESADOS"
+	existeElDirectorio $INSTA_SALIDAS "SALIDAS"
+}
+
+getConfigValue(){
+	KEY=$1
+	RESULT=`grep "^${KEY}" "${CONFIG_FILE}" | sed "s-^${KEY}=\(.*\)-\1-g"`
+	echo $RESULT
+}
+
+existeElDirectorio() {
+	RED='\033[0;31m'
+	GREEN='\033[1;32m'
+	YELLOW='\e[93m'
+	NC='\033[0m' # No Color
+
+	DIR=$1
+	NAME=$2
+	if [ -d "$DIR" ]; then
+		echo -e "Directorio [$NAME]=[$DIR] existe ${GREEN}OK${NC}" 2>&1 | tee -a $LOG_FILE
+	else
+		if [ "$REPARAR" = true ]; then
+			mkdir $DIR
+			echo -e "Directorio [$NAME]=[$DIR] ¡${YELLOW}REPARADO${NC}!" 2>&1 | tee -a $LOG_FILE
+		else
+			echo -e "Directorio [$NAME]=[$DIR] no existe ${RED}ERROR${NC}" 2>&1 | tee -a $LOG_FILE
+		fi
+	fi
+}
+
 verificarSistema(){
 	if [ -f "$CONFIG_FILE" ]; then 
 		echo -e "\nAplicación ya instalada" 2>&1 | tee -a $LOG_FILE
-		echo -e "\nArchivo de configuración" 2>&1 | tee -a $LOG_FILE
+		echo -e "\nArchivo de configuración ${CONFIG_FILE}" 2>&1 | tee -a $LOG_FILE
 		echo "-----------------------------------------" 2>&1 | tee -a $LOG_FILE
 		cat $CONFIG_FILE 2>&1 | tee -a $LOG_FILE
 		echo "-----------------------------------------" 2>&1 | tee -a $LOG_FILE
-		echo "Ejecutar ./instalador.sh -r para reparar la instación." 2>&1 | tee -a $LOG_FILE
+		verificarInstalacion
+		echo -e "\nEjecutar ./instalador.sh -r para reparar la instación." 2>&1 | tee -a $LOG_FILE
 	else
 		inicializarVariablesDefault	
 		configurarDirectorios
@@ -217,6 +275,8 @@ reparar() {
 	echo '-----------' 2>&1 | tee -a $LOG_FILE
 	echo 'Reparación' 2>&1 | tee -a $LOG_FILE
 	echo '-----------' 2>&1 | tee -a $LOG_FILE
+
+	verificarInstalacion
 }
 
 log() {
@@ -239,8 +299,10 @@ echo -e "Bienvenido al sistema de instalacion" 2>&1 | tee -a $LOG_FILE
 echo "-----------------------------------------" 2>&1 | tee -a $LOG_FILE
 
 if [ "$1" == "-r" ]; then
+	REPARAR=true 
 	reparar
 else
+	REPARAR=false
 	verificarSistema
 fi
 echo
