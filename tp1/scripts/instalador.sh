@@ -28,51 +28,51 @@ configurarDirectorios(){
 	echo '-------------------------------------------------------------' 2>&1 | tee -a $LOG_FILE
 	echo 'Puede cambiar los directorios o bien mantener el default (ejemplo/dir/default)'
 	echo
-	# Utilizo un array asociativo para después poder iterar los directorios
-	# declare -A dirs
-	# leer el dato del teclado y guardarlo en la variable de directorio correspondiente
+	
 	echo "[1/7] Defina el directorio de Ejecutables (${GRUPO}/${EJECUTABLES_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE
-	read EJECUTABLES #dirs[ejecutables] 
+	read EJECUTABLES
 	EJECUTABLES="${EJECUTABLES:-$EJECUTABLES_DEFAULT}"
 	EJECUTABLES_DEFAULT=$EJECUTABLES
 	echo "${GRUPO}/${EJECUTABLES}" >> $LOG_FILE
 
 	echo "[2/7] Defina el directorio de Archivos Maestros (${GRUPO}/${MAESTROS_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE
-	read MAESTROS #dirs[maestros]
+	read MAESTROS 
 	MAESTROS="${MAESTROS:-$MAESTROS_DEFAULT}"
 	MAESTROS_DEFAULT=$MAESTROS
 	echo "${GRUPO}/${MAESTROS}" >> $LOG_FILE
 
 	echo "[3/7] Defina el directorio de Novedades (${GRUPO}/${NOVEDADES_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE
-	read NOVEDADES #dirs[novedades]
+	read NOVEDADES
 	NOVEDADES="${NOVEDADES:-$NOVEDADES_DEFAULT}"
 	NOVEDADES_DEFAULT=$NOVEDADES
 	echo "${GRUPO}/${NOVEDADES}" >> $LOG_FILE
 
 	echo "[4/7] Defina el directorio de Novedades Aceptadas (${GRUPO}/${ACEPTADOS_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE
-	read ACEPTADOS #dirs[aceptados]
+	read ACEPTADOS
 	ACEPTADOS="${ACEPTADOS:-$ACEPTADOS_DEFAULT}"
 	ACEPTADOS_DEFAULT=$ACEPTADOS
 	echo "${GRUPO}/${ACEPTADOS}" >> $LOG_FILE
 
 	echo "[5/7] Defina el directorio de Novedades Rechazadas (${GRUPO}/${RECHAZADOS_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE
-	read RECHAZADOS #dirs[rechazados]
+	read RECHAZADOS
 	RECHAZADOS="${RECHAZADOS:-$RECHAZADOS_DEFAULT}"
 	RECHAZADOS_DEFAULT=$RECHAZADOS
 	echo "${GRUPO}/${RECHAZADOS}" >> $LOG_FILE
 
 	echo "[6/7] Defina el directorio de Novedades Procesadas (${GRUPO}/${PROCESADOS_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE
-	read PROCESADOS #dirs[proesados]
+	read PROCESADOS
 	PROCESADOS="${PROCESADOS:-$PROCESADOS_DEFAULT}"
 	PROCESADOS_DEFAULT=$PROCESADOS
 	echo "${GRUPO}/${PROCESADOS}" >> $LOG_FILE
 
 	echo "[7/7] Defina el directorio de Archivos de Salida (${GRUPO}/${SALIDAS_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE 
-	read SALIDAS #dirs[salida]
+	read SALIDAS
 	SALIDAS="${SALIDAS:-$SALIDAS_DEFAULT}"
 	SALIDAS_DEFAULT=$SALIDAS
 	echo "${GRUPO}/${SALIDAS}" >> $LOG_FILE
 
+	# Utilizo un array asociativo para después poder iterar los directorios
+	# declare -A dirs
 	dirs=(${EJECUTABLES} ${MAESTROS} ${NOVEDADES} ${ACEPTADOS} ${RECHAZADOS} ${PROCESADOS} ${SALIDAS})
 	validarDirectorios
 	
@@ -215,12 +215,6 @@ reparar() {
 }
 
 log() {
-	# Chequeo si el archivo existe, si no, lo creo
-  if [ ! -f $LOG_FILE ]; then
-    echo "Creando el archivo de log: $LOG_FILE"
-    touch ${LOG_FILE}
-  fi
-
 	# Obtengo la fecha
 	# con milisegundos solo funciona en Linux, no en Mac
 	fecha=$(date +"%Y-%m-%d %T.%3N")
@@ -228,6 +222,7 @@ log() {
 	echo "${fecha} $USER          $proc     $1" >> ${LOG_FILE}
 }
 
+# Chequeo si el archivo existe, si no, se crea
 if [ ! -f $LOG_FILE ]; then
     touch ${LOG_FILE}
 fi
