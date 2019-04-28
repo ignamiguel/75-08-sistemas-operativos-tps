@@ -17,8 +17,8 @@ Para ejecutar los tests
 
     $ ./run_tests.sh
 
-## Descargar 
-Click [aquí](tp1/download/grupo03.tgz) para descargar la última versión del programa.
+## Descargas 
+Click en [download/grupo03.tgz](download/grupo03.tgz) para descargar la última versión del programa.
 
 ### Descomprimir
 
