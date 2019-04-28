@@ -1,9 +1,12 @@
 #!/bin/bash
 
-# GRUPO=~/grupo03
-GRUPO=$(pwd)/grupo3
-CONF="CONF"
-LOG="/LOG/instalacion.log"
+GRUPO=$(pwd)
+CONF="conf"
+CONF_DIR="${GRUPO}/${CONF}"
+LOG_DIR="${CONF_DIR}/log"
+CONFIG_FILE="${CONF_DIR}/tpconfig.txt"
+LOG_FILE="${LOG_DIR}/instalacion.log"
+
 
 inicializarVariablesDefault(){	
 	EJECUTABLES_DEFAULT="ejecutables"
@@ -16,82 +19,106 @@ inicializarVariablesDefault(){
 }
 
 configurarDirectorios(){
-	echo '-----------' 
-	echo 'Instalación'
-	echo '-----------' 
+	echo '-----------' 2>&1 | tee -a $LOG_FILE
+	echo 'Instalación' 2>&1 | tee -a $LOG_FILE
+	echo '-----------' 2>&1 | tee -a $LOG_FILE
 	echo
 
-	echo 'Configuración de Directorios'
-	echo '-------------------------------------------------------------' 
+	echo 'Configuración de Directorios' 2>&1 | tee -a $LOG_FILE
+	echo '-------------------------------------------------------------' 2>&1 | tee -a $LOG_FILE
+	echo 'Puede cambiar los directorios o bien mantener el default (ejemplo/dir/default)'
 	echo
 	# Utilizo un array asociativo para después poder iterar los directorios
 	# declare -A dirs
 	# leer el dato del teclado y guardarlo en la variable de directorio correspondiente
-	read -p "Defina el directorio de Ejecutables (${GRUPO}/${EJECUTABLES_DEFAULT}): " EJECUTABLES #dirs[ejecutables]
+	echo "[1/7] Defina el directorio de Ejecutables (${GRUPO}/${EJECUTABLES_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE
+	read EJECUTABLES #dirs[ejecutables] 
 	EJECUTABLES="${EJECUTABLES:-$EJECUTABLES_DEFAULT}"
+	EJECUTABLES_DEFAULT=$EJECUTABLES
+	echo "${GRUPO}/${EJECUTABLES}" >> $LOG_FILE
 
-	read -p "Defina el directorio de Archivos Maestros (${GRUPO}/${MAESTROS_DEFAULT}): " MAESTROS #dirs[maestros]
+	echo "[2/7] Defina el directorio de Archivos Maestros (${GRUPO}/${MAESTROS_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE
+	read MAESTROS #dirs[maestros]
 	MAESTROS="${MAESTROS:-$MAESTROS_DEFAULT}"
+	MAESTROS_DEFAULT=$MAESTROS
+	echo "${GRUPO}/${MAESTROS}" >> $LOG_FILE
 
-	read -p "Defina el directorio de Novedades (${GRUPO}/${NOVEDADES_DEFAULT}): " NOVEDADES #dirs[novedades]
+	echo "[3/7] Defina el directorio de Novedades (${GRUPO}/${NOVEDADES_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE
+	read NOVEDADES #dirs[novedades]
 	NOVEDADES="${NOVEDADES:-$NOVEDADES_DEFAULT}"
+	NOVEDADES_DEFAULT=$NOVEDADES
+	echo "${GRUPO}/${NOVEDADES}" >> $LOG_FILE
 
-	read -p "Defina el directorio de Novedades Aceptadas (${GRUPO}/${ACEPTADOS_DEFAULT}): " ACEPTADOS #dirs[aceptados]
+	echo "[4/7] Defina el directorio de Novedades Aceptadas (${GRUPO}/${ACEPTADOS_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE
+	read ACEPTADOS #dirs[aceptados]
 	ACEPTADOS="${ACEPTADOS:-$ACEPTADOS_DEFAULT}"
+	ACEPTADOS_DEFAULT=$ACEPTADOS
+	echo "${GRUPO}/${ACEPTADOS}" >> $LOG_FILE
 
-	read -p "Defina el directorio de Novedades Rechazadas (${GRUPO}/${RECHAZADOS_DEFAULT}): " RECHAZADOS #dirs[rechazados]
+	echo "[5/7] Defina el directorio de Novedades Rechazadas (${GRUPO}/${RECHAZADOS_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE
+	read RECHAZADOS #dirs[rechazados]
 	RECHAZADOS="${RECHAZADOS:-$RECHAZADOS_DEFAULT}"
+	RECHAZADOS_DEFAULT=$RECHAZADOS
+	echo "${GRUPO}/${RECHAZADOS}" >> $LOG_FILE
 
-	read -p "Defina el directorio de Novedades Procesadas (${GRUPO}/${PROCESADOS_DEFAULT}): " PROCESADOS #dirs[proesados]
+	echo "[6/7] Defina el directorio de Novedades Procesadas (${GRUPO}/${PROCESADOS_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE
+	read PROCESADOS #dirs[proesados]
 	PROCESADOS="${PROCESADOS:-$PROCESADOS_DEFAULT}"
+	PROCESADOS_DEFAULT=$PROCESADOS
+	echo "${GRUPO}/${PROCESADOS}" >> $LOG_FILE
 
-	read -p "Defina el directorio de Archivos de Salida (${GRUPO}/${SALIDAS_DEFAULT}): " SALIDAS #dirs[salida]
+	echo "[7/7] Defina el directorio de Archivos de Salida (${GRUPO}/${SALIDAS_DEFAULT}). Para continuar presione [ENTER]" 2>&1 | tee -a $LOG_FILE 
+	read SALIDAS #dirs[salida]
 	SALIDAS="${SALIDAS:-$SALIDAS_DEFAULT}"
+	SALIDAS_DEFAULT=$SALIDAS
+	echo "${GRUPO}/${SALIDAS}" >> $LOG_FILE
 
-	echo
-
-	dirs=(${CONF} ${EJECUTABLES} ${MAESTROS} ${NOVEDADES} ${ACEPTADOS} ${RECHAZADOS} ${PROCESADOS} ${SALIDAS})
+	dirs=(${EJECUTABLES} ${MAESTROS} ${NOVEDADES} ${ACEPTADOS} ${RECHAZADOS} ${PROCESADOS} ${SALIDAS})
 	validarDirectorios
 	
 	if [[ $error -eq 1 ]]; then 
-		echo -e "\nATENCIÓN!; Se han definido directorios iguales para dos o más carpetas. Recuerden que los mismos"
-		echo "son idividuales y no deben repetirse. Tampoco puede usar un directorio llamado /CONF."
-		echo -e "Por favor comience la instalación nuevamente......\n"
+		echo '---------------------------------------------------------------------' 2>&1 | tee -a $LOG_FILE
+		echo '| ¡ERROR!                                                           |' 2>&1 | tee -a $LOG_FILE
+		echo '---------------------------------------------------------------------' 2>&1 | tee -a $LOG_FILE
+		echo "Se han definido directorios iguales para dos o más carpetas. Recuerden que los mismos" 2>&1 | tee -a $LOG_FILE
+		echo "son idividuales y no deben repetirse. Tampoco puede usar un directorio llamado \"${CONF}\"." 2>&1 | tee -a $LOG_FILE
+		echo -e "Por favor comience la instalación nuevamente...\n" 2>&1 | tee -a $LOG_FILE
 		configurarDirectorios
 	else 
 		echo
 
-		echo '---------------------------------------------------------------------'
-		echo '| ATENCIÓN!                                                         |'
-		echo '---------------------------------------------------------------------'
-		echo "Los LOGs del sistema se guardarán en la carpeta ${GRUPO}/CONF/LOG/ "
-		echo
+		echo '---------------------------------------------------------------------' 2>&1 | tee -a $LOG_FILE
+		echo '| ¡ATENCIÓN!                                                        |' 2>&1 | tee -a $LOG_FILE
+		echo '---------------------------------------------------------------------' 2>&1 | tee -a $LOG_FILE
+		echo "Los logs del sistema se guardarán en la carpeta ${LOG_DIR}" 2>&1 | tee -a $LOG_FILE
 		echo
 
-		echo 'Directorios definidos para la Instalación'
-		echo '---------------------------------------------------------------------'
+		echo 'Directorios definidos para la Instalación' 2>&1 | tee -a $LOG_FILE
+		echo '---------------------------------------------------------------------'  2>&1 | tee -a $LOG_FILE
 		echo
 		# Mostrar los directorios configurados
-		echo "Directorio de Ejecutables: ${GRUPO}/${EJECUTABLES}"
-		echo "Directorio de Archivos Maestros: ${GRUPO}/${MAESTROS}"
-		echo "Directorio de las Novedades: ${GRUPO}/${NOVEDADES}"
-		echo "Directorio de las Novedades Aceptadas: ${GRUPO}/${ACEPTADOS}"
-		echo "Directorio de las Novedades Rechazadas: ${GRUPO}/${RECHAZADOS}"
-		echo "Directorio de las Novedades Procesadas: ${GRUPO}/${PROCESADOS}"
-		echo "Directorio de las Archivos de Salida: ${GRUPO}/${SALIDAS}"
-		echo '---------------------------------------------------------------------'
+		echo "[1/7] Directorio de Ejecutables: [${GRUPO}/${EJECUTABLES}]" 2>&1 | tee -a $LOG_FILE
+		echo "[2/7] Directorio de Archivos Maestros: [${GRUPO}/${MAESTROS}]" 2>&1 | tee -a $LOG_FILE
+		echo "[3/7] Directorio de las Novedades: [${GRUPO}/${NOVEDADES}]" 2>&1 | tee -a $LOG_FILE
+		echo "[4/7] Directorio de las Novedades Aceptadas: [${GRUPO}/${ACEPTADOS}]" 2>&1 | tee -a $LOG_FILE
+		echo "[5/7] Directorio de las Novedades Rechazadas: [${GRUPO}/${RECHAZADOS}]" 2>&1 | tee -a $LOG_FILE
+		echo "[6/7] Directorio de las Novedades Procesadas: [${GRUPO}/${PROCESADOS}]" 2>&1 | tee -a $LOG_FILE
+		echo "[7/7] Directorio de las Archivos de Salida: [${GRUPO}/${SALIDAS}]"  2>&1 | tee -a $LOG_FILE
+		echo '---------------------------------------------------------------------'  2>&1 | tee -a $LOG_FILE
 		echo
 
 		OPCION="n"
-		while [[ $OPCION != "s" ]]; do 
-			read -p "Está de acuerdo con esta definición de Directorios? S/N: " OPCION
+		while [[ $OPCION != "s" ]]; do
+			echo "¿Está de acuerdo con esta definición de Directorios? s/n: " 2>&1 | tee -a $LOG_FILE
+			read OPCION
+			echo $OPCION >> $LOG_FILE
 			if [[ $OPCION == "N" ]] || [[ $OPCION == "n" ]] ; then
-				echo "Instalación CANCELADA"
+				echo "Instalación CANCELADA"  2>&1 | tee -a $LOG_FILE
 				configurarDirectorios
 			elif [[ $OPCION == "S" ]] || [[ $OPCION == "s" ]] ; then
 				instalar
 			else 
-				echo -e "Error: El parametro ingresado es erroneo"
+				echo -e "Error: El parametro ingresado es erroneo" 2>&1 | tee -a $LOG_FILE
 			fi
 		done
 	fi
@@ -102,42 +129,43 @@ instalar(){
 		mkdir "${GRUPO}"
 	fi
 
+	if [ ! -f $CONFIG_FILE ]; then
+    echo "Creando el archivo de configuración: $CONFIG_FILE" 2>&1 | tee -a $LOG_FILE
+    touch ${CONFIG_FILE}
+  fi
+
 	for dir in "${!dirs[@]}"; do
-		mkdir "${GRUPO}/${dirs[$dir]}"
+		if [ ! -d "${GRUPO}/${dirs[$dir]}" ]; then
+			echo "Generando directorio ${dirs[$dir]}..." 2>&1 | tee -a $LOG_FILE
+			mkdir "${GRUPO}/${dirs[$dir]}"
+		else
+			echo "¡El directorio ${dirs[$dir]} ya existe!" 2>&1 | tee -a $LOG_FILE
+		fi
 	done
 
-	mkdir ${GRUPO}/${CONF}/LOG
-
-	log "--- Iniciando instalación ---"
-	log "[GRUPO] $GRUPO"
-	log "[CONF] $GRUPO/$CONF"
-	log "[LOG] $GRUPO/$CONF/LOG"
-	for dir in "${!dirs[@]}"; do
-		echo "Generando directorio ${dirs[$dir]}......."
-		log "[${dirs[$dir]}] $GRUPO/${dirs[$dir]}"
-	done
+	if [ ! -d ${LOG_DIR} ]; then
+		mkdir "${LOG_DIR}"
+	fi
 
 	# Copio los ejecutables
-	echo -e "\nCopiando ejecutables....."
-	cp 'originales/scripts/'* "${GRUPO}/${EJECUTABLES}"
+	echo "Copiando ejecutables..." 2>&1 | tee -a $LOG_FILE
+	cp 'originales/scripts/'* "${GRUPO}/${EJECUTABLES}" 2>&1 | tee -a $LOG_FILE
 
 	# Copio los archivos maestros
-	echo -e "\nCopiando archivos maestros....."
-	cp 'originales/datos/'{Operadores.txt,Sucursales.txt} "${GRUPO}/${MAESTROS}"
+	echo "Copiando archivos maestros..." 2>&1 | tee -a $LOG_FILE
+	cp 'originales/datos/'{Operadores.txt,Sucursales.txt} "${GRUPO}/${MAESTROS}" 2>&1 | tee -a $LOG_FILE
 
-	echo "La instalación se realizo de forma correcta. Puede revisar los logs de la instalación en ${CONF}${LOG}"
-	log "Instalación exitosa"
+	echo  -e "\nLa instalación se realizo de forma correcta. Puede revisar los logs de la instalación en \"${LOG_FILE}\"" 2>&1 | tee -a $LOG_FILE
 }
 
 verificarSistema(){
-	if [ -d "$GRUPO" ]; then 
-		echo -e "\nAplicación ya instalada"
-		echo -e "\nArchivo de configuración"
-		echo "-----------------------------------------"
-		cat ${GRUPO}/${CONF}${LOG};
-		echo "-----------------------------------------"
-		echo "Coloque ./instalar.sh -r para reparar la instación."
-		echo "Se verifico que la aplicación ya estaba instalada" >> ${GRUPO}/${CONF}${LOG}
+	if [ -f "$CONFIG_FILE" ]; then 
+		echo -e "\nAplicación ya instalada" 2>&1 | tee -a $LOG_FILE
+		echo -e "\nArchivo de configuración" 2>&1 | tee -a $LOG_FILE
+		echo "-----------------------------------------" 2>&1 | tee -a $LOG_FILE
+		cat $CONFIG_FILE 2>&1 | tee -a $LOG_FILE
+		echo "-----------------------------------------" 2>&1 | tee -a $LOG_FILE
+		echo "Ejecutar ./instalador.sh -r para reparar la instación." 2>&1 | tee -a $LOG_FILE
 	else
 		inicializarVariablesDefault	
 		configurarDirectorios
@@ -152,7 +180,7 @@ formatearRutas(){
 	RECHAZADOS=$(echo $RECHAZADOS | sed "s/\/*//" | sed -r "s/\/+/\//g")
 	PROCESADOS=$(echo $PROCESADOS | sed "s/\/*//" | sed -r "s/\/+/\//g")
 	SALIDAS=$(echo $SALIDAS | sed "s/\/*//" | sed -r "s/\/+/\//g")
-	LOG=$(echo $LOG | sed "s/\/*//" | sed -r "s/\/+/\//g")
+	LOG_DIR=$(echo $LOG_DIR | sed "s/\/*//" | sed -r "s/\/+/\//g")
 }
 
 validarDirectorios(){
@@ -167,7 +195,7 @@ validarDirectorios(){
 	do
 		for dir2 in ${dirs[*]}
 		do 
-			if [[ $dir1 = $dir2  || $dir1 = "conf" ]]; then
+			if [[ $dir1 = $dir2  || $dir1 = $CONF ]]; then
 				let contador=contador+1
 			fi
 		done
@@ -181,29 +209,34 @@ validarDirectorios(){
 }
 
 reparar() {
-	echo "reparado"
+	echo '-----------' 2>&1 | tee -a $LOG_FILE
+	echo 'Reparación' 2>&1 | tee -a $LOG_FILE
+	echo '-----------' 2>&1 | tee -a $LOG_FILE
 }
 
 log() {
 	# Chequeo si el archivo existe, si no, lo creo
-	LOG_FILE=${GRUPO}/${CONF}${LOG}
   if [ ! -f $LOG_FILE ]; then
     echo "Creando el archivo de log: $LOG_FILE"
     touch ${LOG_FILE}
   fi
 
 	# Obtengo la fecha
-  # fecha=$(date +"%Y-%m-%d %H:%M:%S")
 	# con milisegundos solo funciona en Linux, no en Mac
 	fecha=$(date +"%Y-%m-%d %T.%3N")
 	proc="Instalación"
 	echo "${fecha} $USER          $proc     $1" >> ${LOG_FILE}
 }
 
+if [ ! -f $LOG_FILE ]; then
+    touch ${LOG_FILE}
+fi
+
+log "--- Iniciando instalación ---"
 clear
-echo "-----------------------------------------"
-echo -e "Bienvenido al sistema de instalacion"
-echo "-----------------------------------------"
+echo "-----------------------------------------" 2>&1 | tee -a $LOG_FILE
+echo -e "Bienvenido al sistema de instalacion" 2>&1 | tee -a $LOG_FILE
+echo "-----------------------------------------" 2>&1 | tee -a $LOG_FILE
 
 if [ "$1" == "-r" ]; then
 	reparar
