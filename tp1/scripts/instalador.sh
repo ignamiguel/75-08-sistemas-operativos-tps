@@ -1,6 +1,7 @@
 #!/bin/bash
 
-GRUPO=~/grupo03
+# GRUPO=~/grupo03
+GRUPO=$(pwd)/grupo3
 CONF="CONF"
 LOG="/LOG/instalacion.log"
 
@@ -24,8 +25,8 @@ configurarDirectorios(){
 	echo '-------------------------------------------------------------' 
 	echo
 	# Utilizo un array asociativo para después poder iterar los directorios
-	#declare -A dirs
-	#leer el dato del teclado y guardarlo en la variable de directorio correspondiente
+	# declare -A dirs
+	# leer el dato del teclado y guardarlo en la variable de directorio correspondiente
 	read -p "Defina el directorio de Ejecutables (${GRUPO}/${EJECUTABLES_DEFAULT}): " EJECUTABLES #dirs[ejecutables]
 	EJECUTABLES="${EJECUTABLES:-$EJECUTABLES_DEFAULT}"
 
@@ -60,18 +61,17 @@ configurarDirectorios(){
 	else 
 		echo
 
-		echo '--------------------------------------------------------------' 
-		echo '| ATENCIÓN!                                                   |'
-		echo '--------------------------------------------------------------' 
-		echo '|Los LOGs del sistema se guardarán en la carpeta /CONF/LOG/   |' 
-		echo '--------------------------------------------------------------' 
+		echo '---------------------------------------------------------------------'
+		echo '| ATENCIÓN!                                                         |'
+		echo '---------------------------------------------------------------------'
+		echo "Los LOGs del sistema se guardarán en la carpeta ${GRUPO}/CONF/LOG/ "
 		echo
 		echo
 
 		echo 'Directorios definidos para la Instalación'
-		echo '-------------------------------------------------------------' 
+		echo '---------------------------------------------------------------------'
 		echo
-		#Mostrar los directorios configurados
+		# Mostrar los directorios configurados
 		echo "Directorio de Ejecutables: ${GRUPO}/${EJECUTABLES}"
 		echo "Directorio de Archivos Maestros: ${GRUPO}/${MAESTROS}"
 		echo "Directorio de las Novedades: ${GRUPO}/${NOVEDADES}"
@@ -79,7 +79,7 @@ configurarDirectorios(){
 		echo "Directorio de las Novedades Rechazadas: ${GRUPO}/${RECHAZADOS}"
 		echo "Directorio de las Novedades Procesadas: ${GRUPO}/${PROCESADOS}"
 		echo "Directorio de las Archivos de Salida: ${GRUPO}/${SALIDAS}"
-		echo '-------------------------------------------------------------' 
+		echo '---------------------------------------------------------------------'
 		echo
 
 		OPCION="n"
@@ -98,10 +98,7 @@ configurarDirectorios(){
 }
 
 instalar(){
-	#Validar todos los datos
-	#Instalar
-	if [ ! -d ${GRUPO} ];
-	then
+	if [ ! -d ${GRUPO} ]; then
 		mkdir "${GRUPO}"
 	fi
 
@@ -111,25 +108,25 @@ instalar(){
 
 	mkdir ${GRUPO}/${CONF}/LOG
 
-	fecha=$(date '+%d/%m/%Y %H:%M:%S')
-	touch ${GRUPO}/${CONF}${LOG}
-	echo "GRUPO-$GRUPO-$USER-$fecha" >> ${GRUPO}/${CONF}${LOG}
-	echo "CONF-$GRUPO/conf-$USER-$fecha" >> ${GRUPO}/${CONF}${LOG}
-	echo "LOG-$GRUPO/conf/log-$USER-$fecha" >> ${GRUPO}/${CONF}${LOG}
+	log "--- Iniciando instalación ---"
+	log "[GRUPO] $GRUPO"
+	log "[CONF] $GRUPO/$CONF"
+	log "[LOG] $GRUPO/$CONF/LOG"
 	for dir in "${!dirs[@]}"; do
 		echo "Generando directorio ${dirs[$dir]}......."
-		echo "${dirs[$dir]}-$GRUPO/${dirs[$dir]}-$USER-$fecha" >> ${GRUPO}/${CONF}${LOG}
+		log "[${dirs[$dir]}] $GRUPO/${dirs[$dir]}"
 	done
 
 	# Copio los ejecutables
 	echo -e "\nCopiando ejecutables....."
-	cp data/scripts/* "${GRUPO}/${EJECUTABLES}"
+	cp 'originales/scripts/'* "${GRUPO}/${EJECUTABLES}"
 
 	# Copio los archivos maestros
 	echo -e "\nCopiando archivos maestros....."
-	cp data/datos/{Operadores.txt,Sucursales.txt} "${GRUPO}/${MAESTROS}"
+	cp 'originales/datos/'{Operadores.txt,Sucursales.txt} "${GRUPO}/${MAESTROS}"
 
 	echo "La instalación se realizo de forma correcta. Puede revisar los logs de la instalación en ${CONF}${LOG}"
+	log "Instalación exitosa"
 }
 
 verificarSistema(){
@@ -148,7 +145,7 @@ verificarSistema(){
 }
 
 formatearRutas(){
-	#Se encarga de eliminar las barras / colacadas de mas
+	# Se encarga de eliminar las barras / colacadas de mas
 	MAESTROS=$(echo $MAESTROS | sed "s/\/*//" | sed -r "s/\/+/\//g")
 	NOVEDADES=$(echo $NOVEDADES | sed "s/\/*//" | sed -r "s/\/+/\//g")
 	ACEPTADOS=$(echo $ACEPTADOS | sed "s/\/*//" | sed -r "s/\/+/\//g")
@@ -159,11 +156,11 @@ formatearRutas(){
 }
 
 validarDirectorios(){
-	#La idea es comparar todos los elementos del vector y contar cuando hay una igualdad
-	#Este contador debe ser igual a la cantidad de elementos del vector
-	#dado que al compararse todos los elementos con todos se comparan los que son iguales
+	# La idea es comparar todos los elementos del vector y contar cuando hay una igualdad
+	# Este contador debe ser igual a la cantidad de elementos del vector
+	# dado que al compararse todos los elementos con todos se comparan los que son iguales
 
-	contador=0 #Primer Elemento a comparar
+	contador=0 # Primer elemento a comparar
 	error=0
 
 	for dir1 in ${dirs[*]}
@@ -183,18 +180,36 @@ validarDirectorios(){
 	fi
 }
 
-reparar(){
+reparar() {
 	echo "reparado"
+}
+
+log() {
+	# Chequeo si el archivo existe, si no, lo creo
+	LOG_FILE=${GRUPO}/${CONF}${LOG}
+  if [ ! -f $LOG_FILE ]; then
+    echo "Creando el archivo de log: $LOG_FILE"
+    touch ${LOG_FILE}
+  fi
+
+	# Obtengo la fecha
+  # fecha=$(date +"%Y-%m-%d %H:%M:%S")
+	# con milisegundos solo funciona en Linux, no en Mac
+	fecha=$(date +"%Y-%m-%d %T.%3N")
+	proc="Instalación"
+	echo "${fecha} $USER          $proc     $1" >> ${LOG_FILE}
 }
 
 clear
 echo "-----------------------------------------"
 echo -e "Bienvenido al sistema de instalacion"
 echo "-----------------------------------------"
+
 if [ "$1" == "-r" ]; then
 	reparar
 else
 	verificarSistema
 fi
 echo
-#Avisar al usuario que se ha terminado de ejecutar el script 
+log "--- Fin de la instalación ---"
+# Avisar al usuario que se ha terminado de ejecutar el script 

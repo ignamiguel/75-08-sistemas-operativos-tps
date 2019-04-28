@@ -21,7 +21,7 @@ copy_data:
 
 copy_docs:
 # Copia la documentacion a la carpeta donde se va a comprimir
-	cp -r documentacion/* $(compressed_file)/originales/documentacion
+	cp README.md $(compressed_file)/originales/documentacion
 
 create_conf_folder:
 # Crea la carpeta /conf y /conf/log
@@ -30,7 +30,7 @@ create_conf_folder:
 
 copy_readme:
 # Copia el readme a la raiz para que el usuario la pueda ver facilmente
-	cp documentacion/Readme.md $(compressed_file)/Readme.md
+	cp README.md $(compressed_file)/README.md
 
 copy_installer:
 # Copia el instalador a la raiz para que el usuario lo encuentre facilmente
