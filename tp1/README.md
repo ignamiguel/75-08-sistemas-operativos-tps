@@ -6,7 +6,8 @@ Documentación del TP 1
 * [sotp2019_1C_Grupox.doc](https://drive.google.com/file/d/0BxKJAFKQWp8UaHZHVmdIR2gyLVI5dkV5ZzlQLURxYU5EYnRF/view?usp=sharing)
 
 ## Requisitos del sistema
-Completar
+El sistema está diseñado para correr sobre Linux.
+En particular, se agrega el archivo Vagrantfile para poder correr en entornos virtuales.
 
 ## Descargar 
 Click [aquí](tp1/download/grupo03.tgz) para descargar la última versión del programa.
