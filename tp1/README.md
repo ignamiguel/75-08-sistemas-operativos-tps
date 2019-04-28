@@ -7,7 +7,7 @@ Documentación del TP 1
 
 ## Requisitos del sistema
 El sistema está diseñado para correr sobre Linux.
-En particular, se agrega el archivo Vagrantfile para poder correr en entornos virtuales.
+En particular, se agrega el archivo [Vagrantfile](../Vagrantfile) para poder correr en entornos virtuales.
 
 ## Descargar 
 Click [aquí](tp1/download/grupo03.tgz) para descargar la última versión del programa.
