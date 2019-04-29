@@ -40,11 +40,17 @@ cd tests/ambiente_de_testing
 (. dir_scripts/inicializacion.sh ) > /dev/null
 
 # 4) Valido la salida
-TEST_NAME="Test 01 del inicializador"
 if [ $? -eq 0 ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 01 del inicializador"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 01 del inicializador"
+fi
+
+validacion=$(grep -c '.*El sistema fue inicializado correctamente.*' conf/log/inicializacion.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 01"
+else
+    1>&2 printTestError "Test 01"
 fi
 
 # 5) Finalizo el proceso
@@ -77,11 +83,17 @@ cd tests/ambiente_de_testing
 ) > /dev/null 2> /dev/null
 
 # 4) Valido la salida
-TEST_NAME="Test 02 del inicializador"
 if [ $? -eq 1 ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 02 del inicializador"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 02 del inicializador"
+fi
+
+validacion=$(grep -c '.*Inicialización cancelada. El sistema ya está inicializado.*' conf/log/inicializacion.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 02"
+else
+    1>&2 printTestError "Test 02"
 fi
 
 # 5) Finalizo el proceso
@@ -114,11 +126,17 @@ rm -R dir_salida
 (. dir_scripts/inicializacion.sh) > /dev/null 2> /dev/null
 
 # 5) Valido la salida
-TEST_NAME="Test 03 del inicializador"
 if [ $? -eq 2 ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 03 del inicializador"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 03 del inicializador"
+fi
+
+validacion=$(grep -c '.*Inicialización cancelada. No existe el directorio .*dir_salida, el cual es el directorio designado para los archivos.*' conf/log/inicializacion.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 03"
+else
+    1>&2 printTestError "Test 03"
 fi
 
 # 7) Vuelvo al directorio original
@@ -145,11 +163,17 @@ rm dir_scripts/stop.sh
 (. dir_scripts/inicializacion.sh) > /dev/null 2> /dev/null
 
 # 5) Valido la salida
-TEST_NAME="Test 04 del inicializador"
 if [ $? -eq 3 ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 04 del inicializador"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 04 del inicializador"
+fi
+
+validacion=$(grep -c '.*Inicialización cancelada. No existe el ejecutable .*stop.sh en el directorio de ejecutables .*dir_scripts.*' conf/log/inicializacion.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 04"
+else
+    1>&2 printTestError "Test 04"
 fi
 
 # 6) Vuelvo al directorio original
@@ -176,11 +200,10 @@ chmod 600 dir_scripts/proceso.sh
 salida=$(. dir_scripts/inicializacion.sh | grep -m 1 'Se corrigen los permisos sobre el script .*proceso.sh para poder leerlo y ejecutarlo')
 
 # 5) Valido la salida
-TEST_NAME="Test 05 del inicializador"
 if [ ! -z "$salida" ] && [ $? -eq 0 ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 05 del inicializador"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 05 del inicializador"
 fi
 
 # 6) Finalizo el proceso
@@ -214,11 +237,17 @@ rm dir_maestros/Operadores.txt
 (. dir_scripts/inicializacion.sh) 2> /dev/null > /dev/null
 
 # 5) Valido la salida
-TEST_NAME="Test 06 del inicializador"
 if [ $? -eq 4 ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 06 del inicializador"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 06 del inicializador"
+fi
+
+validacion=$(grep -c '.*Inicialización cancelada. No existe el archivo maestro .*Operadores.txt en el directorio de archivos maestros .*dir_maestros.*' conf/log/inicializacion.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 06"
+else
+    1>&2 printTestError "Test 06"
 fi
 
 # 6) Vuelvo al directorio original
@@ -246,11 +275,10 @@ chmod 000 dir_maestros/Sucursales.txt
 salida=$(. dir_scripts/inicializacion.sh | grep -m 1 'Se corrigen los permisos sobre el archivo maestro .*Sucursales\.txt para poder leerlo')
 
 # 5) Valido la salida
-TEST_NAME="Test 07 del inicializador"
 if [ ! -z "$salida" ] && [ $? -eq 0 ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 07 del inicializador"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 07 del inicializador"
 fi
 
 # 7) Finalizo el proceso

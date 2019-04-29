@@ -84,7 +84,7 @@ done < "$conf_dir/tpconfig.txt"
 # Me fijo que existan los directorios
 for dir_key in "${!dirs[@]}"; do
     if [ ! -d "${dirs[$dir_key]}" ]; then
-        write_to_log "ERR" "No existe el directorio ${dirs[$dir_key]}, el cual es el directorio designado para los archivos \"$dir_key\"." "$reparar"
+        write_to_log "ERR" "Inicialización cancelada. No existe el directorio ${dirs[$dir_key]}, el cual es el directorio designado para los archivos $dir_key." "$reparar"
         return 2
     fi
 done
