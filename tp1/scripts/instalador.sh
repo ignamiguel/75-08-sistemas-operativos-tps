@@ -75,7 +75,7 @@ configurarDirectorios(){
 	dirs=("${EJECUTABLES}" "${MAESTROS}" "${NOVEDADES}" "${ACEPTADOS}" "${RECHAZADOS}" "${PROCESADOS}" "${SALIDAS}")
 	validarDirectorios
 	
-	if [[ $error -eq 1 ]]; then 
+	if [ $error -eq 1 ]; then 
 		echo '---------------------------------------------------------------------' 2>&1 | tee -a "$LOG_FILE"
 		echo '| ¡ERROR!                                                           |' 2>&1 | tee -a "$LOG_FILE"
 		echo '---------------------------------------------------------------------' 2>&1 | tee -a "$LOG_FILE"
@@ -257,9 +257,9 @@ validarDirectorios(){
 	contador=0 # Primer elemento a comparar
 	error=0
 
-	for dir1 in "${dirs[*]}"
+	for dir1 in "${dirs[@]}"
 	do
-		for dir2 in "${dirs[*]}"
+		for dir2 in "${dirs[@]}"
 		do 
 			if [[ $dir1 = $dir2  || $dir1 = $CONF ]]; then
 				let contador=contador+1

@@ -1,0 +1,7 @@
+dir_scripts
+dir_maestros
+dir_novedades
+dir_novedades
+dir_rechazados
+dir_procesados
+dir_salida

@@ -26,7 +26,7 @@ echo "---------------------------------------------------------------------"
 # ---------------------------------------------------------------------
 # Test 01
 # ---------------------------------------------------------------------
-# Instaldo desde cero
+# Instalo desde cero
 # ---------------------------------------------------------------------
 
 # 1) Ambiente nuevo.
@@ -51,7 +51,7 @@ cd ../../
 # ---------------------------------------------------------------------
 # Test 02
 # ---------------------------------------------------------------------
-# Instaldo con archivos con espacios
+# Instalo con carpetas con espacios
 # ---------------------------------------------------------------------
 
 # 1) Ambiente nuevo.
@@ -67,6 +67,31 @@ if [ $? -eq 0 ]; then
 else
     1>&2 printTestError "Test 02: instalación básica con fallida"
 fi
+
+# 4) Vuelvo al directorio original
+cd ../../
+
+
+
+# ---------------------------------------------------------------------
+# Test 03
+# ---------------------------------------------------------------------
+# Instalo con carpetas duplicadas
+# ---------------------------------------------------------------------
+
+# 1) Ambiente nuevo.
+tests/crear_ambiente.sh
+cd tests/ambiente_de_testing
+
+# 2) Instalo con un camino feliz. Tiro el stdout porque no me interesa
+./instalador.sh # < ../instalador/instalacion_con_duplicados.txt # > /dev/null
+
+# 3) Valido la salida
+# if [ $? -eq 0 ]; then
+#     printTestOk "Test 02: instalación básica con éxito"
+# else
+#     1>&2 printTestError "Test 02: instalación básica con fallida"
+# fi
 
 # 4) Vuelvo al directorio original
 cd ../../
