@@ -63,9 +63,9 @@ cd tests/ambiente_de_testing
 
 # 3) Valido la salida
 if [ $? -eq 0 ]; then
-    printTestOk "Test 02: instalación básica con éxito"
+    printTestOk "Test 02: instalación con espacios con éxito"
 else
-    1>&2 printTestError "Test 02: instalación básica con fallida"
+    1>&2 printTestError "Test 02: instalación con espacios con fallida"
 fi
 
 # 4) Vuelvo al directorio original
@@ -84,14 +84,14 @@ tests/crear_ambiente.sh
 cd tests/ambiente_de_testing
 
 # 2) Instalo con un camino feliz. Tiro el stdout porque no me interesa
-./instalador.sh # < ../instalador/instalacion_con_duplicados.txt # > /dev/null
+./instalador.sh  < ../instalador/instalacion_con_duplicados.txt > /dev/null
 
 # 3) Valido la salida
-# if [ $? -eq 0 ]; then
-#     printTestOk "Test 02: instalación básica con éxito"
-# else
-#     1>&2 printTestError "Test 02: instalación básica con fallida"
-# fi
+if [ $? -eq 0 ]; then
+    printTestOk "Test 03: instalación con carpetas duplicadas con éxito"
+else
+    1>&2 printTestError "Test 03: instalación con carpetas duplicadas fallida"
+fi
 
 # 4) Vuelvo al directorio original
 cd ../../
