@@ -130,18 +130,21 @@ instalar(){
 	fi
 
 	if [ ! -f $CONFIG_FILE ]; then
-    echo "Creando el archivo de configuración: $CONFIG_FILE" 2>&1 | tee -a $LOG_FILE
-    touch ${CONFIG_FILE}
-		echo "GRUPO=$GRUPO" >> ${CONFIG_FILE}
-		echo "CONF=$CONF_DIR" >> ${CONFIG_FILE}
-		echo "LOGS=$LOG_DIR" >> ${CONFIG_FILE}
-		echo "SCRIPTS=${GRUPO}/${EJECUTABLES}" >> ${CONFIG_FILE}
-		echo "MAESTROS=${GRUPO}/${MAESTROS}" >> ${CONFIG_FILE}
-		echo "NOVEDADES=${GRUPO}/${NOVEDADES}" >> ${CONFIG_FILE}
-		echo "ACEPTADOS=${GRUPO}/${ACEPTADOS}" >> ${CONFIG_FILE}
-		echo "RECHAZADOS=${GRUPO}/${RECHAZADOS}" >> ${CONFIG_FILE}
-		echo "PROCESADOS=${GRUPO}/${PROCESADOS}" >> ${CONFIG_FILE}
-		echo "SALIDAS=${GRUPO}/${SALIDAS}" >> ${CONFIG_FILE}
+    # Guardo dirs y otras carpetas en conf/tpconfig.txt
+		echo "Creando el archivo de configuración: $CONFIG_FILE" 2>&1 | tee -a $LOG_FILE
+		touch ${CONFIG_FILE}
+
+		fecha=$(date '+%Y/%m/%d %H:%M:%S')
+		echo "grupo-$GRUPO-$USER-$fecha" >> conf/tpconfig.txt
+		echo "conf-$CONF_DIR-$USER-$fecha" >> conf/tpconfig.txt
+		echo "log-$LOG_DIR-$USER-$fecha" >> conf/tpconfig.txt
+		echo "ejecutables-${GRUPO}/${EJECUTABLES}-$USER-$fecha" >> conf/tpconfig.txt
+		echo "maestros-${GRUPO}/${MAESTROS}-$USER-$fecha" >> conf/tpconfig.txt		
+		echo "novedades-${GRUPO}/${NOVEDADES}-$USER-$fecha" >> conf/tpconfig.txt
+		echo "aceptados-${GRUPO}/${ACEPTADOS}-$USER-$fecha" >> conf/tpconfig.txt
+		echo "rechazados-${GRUPO}/${RECHAZADOS}-$USER-$fecha" >> conf/tpconfig.txt
+		echo "procesados-${GRUPO}/${PROCESADOS}-$USER-$fecha" >> conf/tpconfig.txt
+		echo "salidas-${GRUPO}/${SALIDAS}-$USER-$fecha" >> conf/tpconfig.txt
   fi
 
 	for dir in "${!dirs[@]}"; do
@@ -171,32 +174,32 @@ instalar(){
 verificarInstalacion() {
 	echo "Verificando la instalación..." 2>&1 | tee -a $LOG_FILE
 	echo 
-	INSTA_GRUPO="$(getConfigValue GRUPO)"
-	INSTA_CONF="$(getConfigValue CONF)"
-	INSTA_LOGS="$(getConfigValue LOGS)"
-	INSTA_SCRIPTS="$(getConfigValue SCRIPTS)"
-	INSTA_MAESTROS="$(getConfigValue MAESTROS)"
-	INSTA_NOVEDADES="$(getConfigValue NOVEDADES)"
-	INSTA_ACEPTADOS="$(getConfigValue ACEPTADOS)"
-	INSTA_RECHAZADOS="$(getConfigValue RECHAZADOS)"
-	INSTA_PROCESADOS="$(getConfigValue PROCESADOS)"
-	INSTA_SALIDAS="$(getConfigValue SALIDAS)"
+	INSTA_GRUPO="$(getConfigValue grupo)"
+	INSTA_CONF="$(getConfigValue conf)"
+	INSTA_LOGS="$(getConfigValue log)"
+	INSTA_SCRIPTS="$(getConfigValue ejecutables)"
+	INSTA_MAESTROS="$(getConfigValue maestros)"
+	INSTA_NOVEDADES="$(getConfigValue novedades)"
+	INSTA_ACEPTADOS="$(getConfigValue aceptados)"
+	INSTA_RECHAZADOS="$(getConfigValue rechazados)"
+	INSTA_PROCESADOS="$(getConfigValue procesados)"
+	INSTA_SALIDAS="$(getConfigValue salidas)"
 
-	existeElDirectorio $INSTA_GRUPO "GRUPO"
-	existeElDirectorio $INSTA_CONF "CONF"
-	existeElDirectorio $INSTA_LOGS "LOGS"
-	existeElDirectorio $INSTA_SCRIPTS "SCRIPTS"
-	existeElDirectorio $INSTA_MAESTROS "MAESTROS"
-	existeElDirectorio $INSTA_NOVEDADES "NOVEDADES"
-	existeElDirectorio $INSTA_ACEPTADOS "ACEPTADOS"
-	existeElDirectorio $INSTA_RECHAZADOS "RECHAZADOS"
-	existeElDirectorio $INSTA_PROCESADOS "PROCESADOS"
-	existeElDirectorio $INSTA_SALIDAS "SALIDAS"
+	existeElDirectorio $INSTA_GRUPO "grupo"
+	existeElDirectorio $INSTA_CONF "conf"
+	existeElDirectorio $INSTA_LOGS "log"
+	existeElDirectorio $INSTA_SCRIPTS "ejecutables"
+	existeElDirectorio $INSTA_MAESTROS "maestros"
+	existeElDirectorio $INSTA_NOVEDADES "novedades"
+	existeElDirectorio $INSTA_ACEPTADOS "aceptados"
+	existeElDirectorio $INSTA_RECHAZADOS "rechazados"
+	existeElDirectorio $INSTA_PROCESADOS "procesados"
+	existeElDirectorio $INSTA_SALIDAS "salidas"
 }
 
 getConfigValue(){
 	KEY=$1
-	RESULT=`grep "^${KEY}" "${CONFIG_FILE}" | sed "s-^${KEY}=\(.*\)-\1-g"`
+	RESULT=`grep "^${KEY}" "${CONFIG_FILE}" | sed "s/^${KEY}-\([^-]*\)-\([^-]*\)-\(.*\)/\1/g"`
 	echo $RESULT
 }
 
