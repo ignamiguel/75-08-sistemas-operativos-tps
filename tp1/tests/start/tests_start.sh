@@ -44,11 +44,17 @@ cd tests/ambiente_de_testing
 ) > /dev/null
 
 # 4) Valido la salida
-TEST_NAME="Test 01: start básico con éxito"
 if [ $? -eq 0 ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 01: start básico con éxito"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 01: start básico con éxito"
+fi
+
+validacion=$(grep -c '.*Se inició el proceso con el pid .*' conf/log/start.log)
+if [ $validacion -eq 2 ]; then
+    printTestOk "Test 01"
+else
+    1>&2 printTestError "Test 01"
 fi
 
 # 5) Finalizo el proceso
@@ -78,11 +84,10 @@ cd tests/ambiente_de_testing
 salida=$(. dir_scripts/inicializacion.sh | grep -m 1 'Inicia el comando start.sh')
 
 # 4) Valido la salida
-TEST_NAME="Test 02: start"
 if [ ! -z "$salida" ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 02: start"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 02: start"
 fi
 
 # 5) Vuelvo al directorio original

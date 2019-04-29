@@ -43,11 +43,17 @@ cd tests/ambiente_de_testing
 ) > /dev/null
 
 # 4) Valido la salida
-TEST_NAME="Test 01: stop con éxito"
 if [ $? -eq 0 ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 01: stop con éxito"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 01: stop con éxito"
+fi
+
+validacion=$(grep -c '.*Se terminó el proceso .* satisfactoriamente.*' conf/log/stop.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 01"
+else
+    1>&2 printTestError "Test 01"
 fi
 
 # 5) Vuelvo al directorio original
@@ -75,11 +81,17 @@ cd tests/ambiente_de_testing
 ) > /dev/null 2> /dev/null
 
 # 4) Valido la salida
-TEST_NAME="Test 02: stop"
 if [ $? -eq 1 ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 02: stop"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 02: stop"
+fi
+
+validacion=$(grep -c '.*El proceso no se encuentra en ejecución.*' conf/log/stop.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 02"
+else
+    1>&2 printTestError "Test 02"
 fi
 
 # 5) Vuelvo al directorio original
@@ -101,15 +113,16 @@ cd tests/ambiente_de_testing
 
 # 3) Termino el proceso
 (
+    . dir_scripts/inicializacion.sh 
+    ./dir_scripts/stop.sh
     ./dir_scripts/stop.sh
 ) > /dev/null 2> /dev/null
 
 # 4) Valido la salida
-TEST_NAME="Test 03: stop"
 if [ $? -eq 1 ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 03: stop"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 03: stop"
 fi
 
 # 5) Vuelvo al directorio original
