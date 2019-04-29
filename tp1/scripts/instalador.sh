@@ -1,8 +1,7 @@
 #!/bin/bash
 
 GRUPO=$(pwd)
-CONF="conf"
-CONF_DIR="${GRUPO}/${CONF}"
+CONF_DIR="${GRUPO}/conf"
 LOG_DIR="${CONF_DIR}/log"
 CONFIG_FILE="${CONF_DIR}/tpconfig.txt"
 LOG_FILE="${LOG_DIR}/instalacion.log"
@@ -79,8 +78,8 @@ configurarDirectorios(){
 		echo '---------------------------------------------------------------------' 2>&1 | tee -a "$LOG_FILE"
 		echo '| ¡ERROR!                                                           |' 2>&1 | tee -a "$LOG_FILE"
 		echo '---------------------------------------------------------------------' 2>&1 | tee -a "$LOG_FILE"
-		echo "Se han definido directorios iguales para dos o más carpetas. Recuerden que los mismos" 2>&1 | tee -a "$LOG_FILE"
-		echo "son idividuales y no deben repetirse. Tampoco puede usar un directorio llamado \"${CONF}\"." 2>&1 | tee -a "$LOG_FILE"
+		echo "Se han definido directorios iguales para dos o más carpetas o se ha utilizado un nombre reservado. Recuerde que los mismos" 2>&1 | tee -a "$LOG_FILE"
+		echo "son idividuales y no deben repetirse y tampoco puede usarse un directorio llamado 'conf' u 'originales'." 2>&1 | tee -a "$LOG_FILE"
 		echo -e "Por favor comience la instalación nuevamente...\n" 2>&1 | tee -a "$LOG_FILE"
 		configurarDirectorios
 	else 
@@ -261,7 +260,7 @@ validarDirectorios(){
 	do
 		for dir2 in "${dirs[@]}"
 		do 
-			if [[ $dir1 = $dir2  || $dir1 = $CONF ]]; then
+			if [[ $dir1 = $dir2  || $dir1 = "conf" || $dir1 = "originales" ]]; then
 				let contador=contador+1
 			fi
 		done
