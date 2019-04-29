@@ -184,7 +184,7 @@ verificarInstalacion() {
 	INSTA_PROCESADOS="$(getConfigValue procesados)"
 	INSTA_SALIDAS="$(getConfigValue salidas)"
 
-	existeElDirectorio "$INSTA_GRUPO" "grupo"
+	# existeElDirectorio "$INSTA_GRUPO" "grupo"
 	existeElDirectorio "$INSTA_CONF" "conf"
 	existeElDirectorio "$INSTA_LOGS" "log"
 	existeElDirectorio "$INSTA_SCRIPTS" "ejecutables"
@@ -194,6 +194,20 @@ verificarInstalacion() {
 	existeElDirectorio "$INSTA_RECHAZADOS" "rechazados"
 	existeElDirectorio "$INSTA_PROCESADOS" "procesados"
 	existeElDirectorio "$INSTA_SALIDAS" "salidas"
+
+	# Valido que existan los scripts
+	for script in {inicializacion.sh,proceso.sh,start.sh,stop.sh}; do
+		if [ ! -f "$INSTA_SCRIPTS/$script" ]; then
+			cp originales/scripts/$script "$INSTA_SCRIPTS"
+		fi
+	done
+
+	# Valido que existan los archivos maestros
+	for maestro in {Operadores.txt,Sucursales.txt}; do
+		if [ ! -f "$INSTA_MAESTROS/$maestro" ]; then
+			cp originales/datos/$maestro "$INSTA_MAESTROS"
+		fi
+	done
 }
 
 getConfigValue(){
@@ -214,7 +228,7 @@ existeElDirectorio() {
 		echo -e "Directorio [$NAME]=[$DIR] existe ${GREEN}OK${NC}" 2>&1 | tee -a "$LOG_FILE"
 	else
 		if [ "$REPARAR" = true ]; then
-			mkdir $DIR
+			mkdir "$DIR"
 			echo -e "Directorio [$NAME]=[$DIR] ¡${YELLOW}REPARADO${NC}!" 2>&1 | tee -a "$LOG_FILE"
 		else
 			echo -e "Directorio [$NAME]=[$DIR] no existe ${RED}ERROR${NC}" 2>&1 | tee -a "$LOG_FILE"
@@ -226,11 +240,11 @@ verificarSistema(){
 	if [ -f "$CONFIG_FILE" ]; then 
 		echo -e "\nAplicación ya instalada" 2>&1 | tee -a "$LOG_FILE"
 		echo -e "\nArchivo de configuración ${CONFIG_FILE}" 2>&1 | tee -a "$LOG_FILE"
-		echo "-----------------------------------------" 2>&1 | tee -a "$LOG_FILE"
-		cat $CONFIG_FILE 2>&1 | tee -a "$LOG_FILE"
-		echo "-----------------------------------------" 2>&1 | tee -a "$LOG_FILE"
-		verificarInstalacion
-		echo -e "\nEjecutar ./instalador.sh -r para reparar la instación." 2>&1 | tee -a "$LOG_FILE"
+		# echo "-----------------------------------------" 2>&1 | tee -a "$LOG_FILE"
+		# cat $CONFIG_FILE 2>&1 | tee -a "$LOG_FILE"
+		# echo "-----------------------------------------" 2>&1 | tee -a "$LOG_FILE"
+		# verificarInstalacion
+		echo -e "\nEjecutar ./instalador.sh -r para reparar la instalación si es necesario." 2>&1 | tee -a "$LOG_FILE"
 	else
 		inicializarVariablesDefault	
 		configurarDirectorios
