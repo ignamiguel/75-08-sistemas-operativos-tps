@@ -1,0 +1,8 @@
+dir scripts
+dir maestros
+dir novedades
+dir aceptados
+dir rechazados
+dir procesados
+dir salida
+s

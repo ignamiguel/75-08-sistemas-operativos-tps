@@ -37,9 +37,36 @@ cd tests/ambiente_de_testing
 ./instalador.sh < ../instalador/instalacion_feliz.txt > /dev/null
 
 # 3) Valido la salida
-TEST_NAME="Test 01: instalación básica con éxito"
 if [ $? -eq 0 ]; then
-    printTestOk "$TEST_NAME"
+    printTestOk "Test 01: instalación básica con éxito"
 else
-    1>&2 printTestError "$TEST_NAME"
+    1>&2 printTestError "Test 01: instalación básica con fallida"
 fi
+
+# 4) Vuelvo al directorio original
+cd ../../
+
+
+
+# ---------------------------------------------------------------------
+# Test 02
+# ---------------------------------------------------------------------
+# Instaldo con archivos con espacios
+# ---------------------------------------------------------------------
+
+# 1) Ambiente nuevo.
+tests/crear_ambiente.sh
+cd tests/ambiente_de_testing
+
+# 2) Instalo con un camino feliz. Tiro el stdout porque no me interesa
+./instalador.sh < ../instalador/instalacion_con_espacios.txt > /dev/null
+
+# 3) Valido la salida
+if [ $? -eq 0 ]; then
+    printTestOk "Test 02: instalación básica con éxito"
+else
+    1>&2 printTestError "Test 02: instalación básica con fallida"
+fi
+
+# 4) Vuelvo al directorio original
+cd ../../
