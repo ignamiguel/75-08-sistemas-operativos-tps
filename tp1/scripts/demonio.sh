@@ -1,57 +1,54 @@
 #! /bin/bash
+CONTADOR=0
 TPPATH="${PWD%/*}"
 CONF="$TPPATH/conf"
 LOG="$CONF/log"
-
-NOVEDADES_PATH="$TPPATH/datos/NOVEDADES"
-ACEPTADOS_PATH="$TPPATH/datos/ACEPTADOS"
-RECHAZADOS_PATH="$TPPATH/datos/RECHAZADOS"
+NOVEDADES="$TPPATH/datos/NOVEDADES"
+ACEPTADOS="$TPPATH/datos/ACEPTADOS"
+RECHAZADOS="$TPPATH/datos/RECHAZADOS"
 OPERADORES="$TPPATH/datos/Operadores.txt"
 SUCURSALES="$TPPATH/datos/Sucursales.txt"
-CONTADOR=0
-PROCESADOS_PATH="$TPPATH/datos/PROCESADOS"
-PATH_SALIDA=$TPPATH/datos
+PROCESADOS="$TPPATH/datos/PROCESADOS"
+SALIDA=$TPPATH/datos
 
-log ()
+log () 
 {
-        date +"$USER-%x-%X-$1-$2" >> "$LOG/proceso.log" 
+        date +"%x %X $USER $1 $2" >> "$LOG/proceso.log" 
 }
 
 validarNombreTipo()
 {
 	
-	find "$NOVEDADES_PATH" -type f -not -name "Entregas_[0-9][0-9].txt" |
+	find "$NOVEDADES" -type f -not -name "Entregas_[0-9][0-9].txt" |
 		while read nombres
 			do
 				if [ -f "$nombres" ]
 				then
-					mv "$nombres" "$RECHAZADOS_PATH"
+					mv "$nombres" "$RECHAZADOS"
 					log "$nombres es un nombre incorrecto. ha sido movido a rechazados"
 				fi
 		done
 	
-	
-	for f in "$NOVEDADES_PATH"/*
+	for f in "$NOVEDADES"/*
 	do
 		
-		if [ -f "$PROCESADOS_PATH/$(basename "$f")" ] 
+		if [ -f "$PROCESADOS/$(basename "$f")" ] 
 		then
 			log "$f fue procesado con anterioridad. ha sido movido a rechazados"
-			mv $f "$RECHAZADOS_PATH"
+			mv $f "$RECHAZADOS"
 			
 		elif ! [ -s $f ] 
 		then
 			log "$f está vacio. ha sido movido a rechazados"
-			mv $f "$RECHAZADOS_PATH"
+			mv $f "$RECHAZADOS"
 		
 		elif ! [ -f $f ] 
 		then
-			valido=false
 			log "$f no es un archivo regular. ha sido movido a rechazados"
-			mv $f "$RECHAZADOS_PATH"
+			mv $f "$RECHAZADOS"
 	 	else 
 	 		log "$f ha sido movido a aceptados"
-	 		mv $f "$ACEPTADOS_PATH"
+	 		mv $f "$ACEPTADOS"
 	 fi		
 
 	done
@@ -60,20 +57,20 @@ validarNombreTipo()
 validarTrailer()
 {
 	
-	for f in "$ACEPTADOS_PATH"/* 
+	for f in "$ACEPTADOS"/* 
 	do
 	  cp_total=0
 	  cantidad_lineas=0
 	  lineas=-1 
 	  trailer_cp=0
 	  
-	  while IFS=',' read -r  operador pieza nombre doc_tipo doc_numero codigo_postal;
+	  while IFS=',' read -r  operador pieza nombre tipo_documento numero_documento codigo_postal;
 	  do
 		let "lineas=lineas + 1"
 		let "cp_total=cp_total + codigo_postal"
 		trailer_cp=$codigo_postal
-		cantidad_lineas=$doc_numero
-	  done < $f
+		cantidad_lineas=$numero_documento
+	done < $f
 	  
 	  let "cp_total=cp_total -trailer_cp" 
 	  if [ $lineas -eq $cantidad_lineas ] && [ $cp_total -eq $trailer_cp ];
@@ -81,97 +78,95 @@ validarTrailer()
 		log "El trailer de $f es correcto"
 	  else
 		log "El trailer de $f es incorrecto. ha sido movido a rechazados"
-		mv $f $RECHAZADOS_PATH
+		mv $f $RECHAZADOS
 	  fi
 	done
 }
 
 generarArchivos()
 {
-	for f in "$ACEPTADOS_PATH"/*
+	for f in "$ACEPTADOS"/*
 	do
-	  while IFS=',' read -r  operador pieza nombre doc_tipo doc_numero codigo_postal;
+	  while IFS=',' read -r  operador pieza nombre tipo_documento numero_documento codigo_postal;
 	  do
-		valido=true	  	
 		
-		if  ! ( grep -q $operador "$OPERADORES" ) ;
-		then
-			mensaje_log="Su operador no se encuentra en el archivo de operadores"
-			valido=false
-		fi
-		
+		bool=1	
 
-		if  ! ( grep -q "$operador\|$codigo_postal" "$SUCURSALES" ) ;
+		if  ! ( grep -q $operador"\|$codigo_postal" "$SUCURSALES" ) ;
 		then
-			mensaje_log="Operador y Codigo Postal invalidos"
-			valido=false
+			mensaje_log="La dupla Operador: $operador y Codigo Postal: $codigo_postal no existe en sucursales"
+			bool=0
+		
+		elif ! ( grep -q $operador "$OPERADORES" ) ;
+		then
+			mensaje_log="operador: $operador no se encuentra en el archivo de operadores"
+			bool=0
 		fi
 		
-                if [ $valido = true ]
-                then
-                        valido=false
-                        while IFS=',' read -r codigo_suc nombre_suc dom loc pro cod_pos cod_op precio;
-                        do
-                                if [ "$operador" == "cod_op" ] && [ "$codigo_postal" == "$cod_pos" ]
-                                then
-                                        valido=true
-                                        log "$operador-$codigo_postal se encuentra en sucursales.txt"
-                                        break;
-                                fi
-                        done < "$SUCURSALES"
-                fi
+		
+		
                 
-                if [ $valido = true ]
+        if [ $bool == 1 ]
+        then
+          	bool=0
+            while IFS=',' read -r codigo_operacion nombre_operador cuit fecha_inicio fecha_final;
+                do
+                inicio=$(echo "$fecha_inicio" | cut -d'/' -f2)
+                final=$(echo "$fecha_final" | cut -d'/' -f2)
+                actual=$(date +"%m")
+               	if [ "$operador" == "$codigo_operacion" ] && [ $final -ge $actual ] && [ $inicio -le $actual ]
                 then
-                        valido=false
-                        while IFS=',' read -r codigo_op nombre_op cuit_op inicio_op fin_op;
-                        do
-                                mes_actual=$(date +"%m")
-                                mes_inicio=$(echo "$inicio_op" | cut -d'/' -f2)
-                                mes_final=$(echo "$fin_op" | cut -d'/' -f2)
-                                
-                                if [ "$operador" == "$codigo_op" ] && [ $mes_inicio -le $mes_actual ] && [ $mes_final -ge $mes_actual ]
-                                then
-                                        log "$operador se encuentra en operadores.txt, en estado activo "
-                                        valido=true
-                             			break;
-                                fi
-                        done < "$OPERADORES"
+                	bool=1
+                	log "Se encontro $operador en operadores.txt, activo desde $inicio hasta $final"
+                	break;
                 fi
-               
+                done < "$OPERADORES"
+        fi
+                
+                
+        if [ $bool == 1 ]
+        then
+            bool=0
+            while IFS=',' read -r s_cod_suc s_nom_suc s_dom s_loc s_pro s_cod_pos s_cod_op s_precio;
+            do
+                if [ "$operador" == "$s_cod_op" ] && [ "$codigo_postal" == "$s_cod_pos" ]
+                    then
+                        bool=1
+                        log "Se encontro dupla $operador-$codigo_postal en sucursales.txt"
+                        break;
+                    fi
+                    done < "$SUCURSALES"
+        fi
 
-		if [ $valido  = true ]
-		then
-			log "La pieza: $pieza del operador: $operador fue aceptada"
-		else
-			log "La pieza: $pieza del operador: $operador fue rechazada: $mensaje_log"
-		fi
-
+		printf -v pieza '%015d' $pieza
+	    printf -v nombre_pad '%20s' "$(echo $nombre | awk '$1=$1')"
+		printf -v numero_documento '%011d' $numero_documento
 		
-		printf -v pieza '%020d' $pieza
-	    nombre=$(echo $nombre | awk '$1=$1')
-		#completo con espacios
-	    printf -v nombre_pad '%48s' "$nombre"
-		printf -v doc_numero '%011d' $doc_numero
-		archivo=$(basename "$f")
-	    codigo_suc_destino=$(awk -v codigo=$codigo_postal -F ";" '{ if($6 == codigo) {print $1 } }' "$SUCURSALES")
-		printf -v codigo_suc_destino '%3s' $codigo_suc_destino
-		suc_destino=$(awk -v codigo=$codigo_postal -F ";" '{ if($6 == codigo) {print $2 } }' "$SUCURSALES")
+		cod_destino=$(awk -v codigo=$codigo_postal -F "," '{ if($6 == codigo) {print $1 } }' "$SUCURSALES")
+		printf -v cod_destino '%3s' $cod_destino
+		
+		suc_destino=$(awk -v codigo=$codigo_postal -F "," '{ if($6 == codigo) {print $2 } }' "$SUCURSALES")
 		printf -v suc_destino '%25s' "$suc_destino"
-	    direccion_suc_destino=$(awk -v codigo=$codigo_postal -F ";" '{if($6 == codigo) {print $3 } }' "$SUCURSALES")
-		printf -v direccion_suc_destino '%25s' "$direccion_suc_destino"
-		costo_entrega=$(awk -v codigo=$codigo_postal -F ";" '{ if($6 == codigo) {print $8 } }' "$SUCURSALES")
-		printf -v costo_entrega '%06d' $costo_entrega
+	    
+	    direccion_suc_destino=$(awk -v codigo=$codigo_postal -F "," '{if($6 == codigo) {print $3 } }' "$SUCURSALES")
 		
-		if [ $valido = true ]
+		printf -v direccion_suc_destino '%25s' "$direccion_suc_destino"
+		costo=$(awk -v codigo=$codigo_postal -F "," '{ if($6 == codigo) {print $8 } }' "$SUCURSALES")
+		printf -v costo '%06d' $costo
+
+		if (( bool  == 1 ))
 		then
-			echo $pieza"$nombre_pad"$doc_tipo$doc_numero$codigo_postal"$codigo_suc_destino""$suc_destino""$direccion_suc_destino"$costo_entrega$archivo >> $PATH_SALIDA/"Entregas_"$operador
+			log "Pieza aceptada: $pieza Operador: $operador Codigo Postal: $codigo_postal"
+			echo $pieza"$nombre_pad" $tipo_documento $numero_documento $codigo_postal"$cod_destino""$suc_destino" "$direccion_suc_destino" $costo "$(basename "$f")" >> $SALIDA/"Entregas_"$operador
 		else
-			echo $pieza"$nombre_pad"$doc_tipo$doc_numero$codigo_postal"$codigo_suc_destino""$suc_destino""$direccion_suc_destino"$costo_entrega$archivo >> $PATH_SALIDA/"Entregas_Rechazadas"
+			log "Pieza rechazada: $pieza Operador: $operador Codigo Postal: $codigo_postal mensaje_log: $mensaje_log"
+			echo $pieza"$nombre_pad" $tipo_documento $numero_documento $codigo_postal"$cod_destino""$suc_destino" "$direccion_suc_destino" $costo "$(basename "$f")" >> $SALIDA/"Entregas_Rechazadas"
 		fi
 		
-	  	done < $f
-		mv $f $PROCESADOS_PATH
+		done < $f
+	  #Fin proceso, mover archivo a procesado
+	 # mv $f $PROCESADOS
+
 	done
 }
 
@@ -182,21 +177,24 @@ main ()
 	do
 		CONTADOR=$((CONTADOR+1))
 		log "ciclo:" "$CONTADOR"
+		echo "ciclo: $CONTADOR"
 
 	
-		if [ "$(ls -A "$NOVEDADES_PATH")" ] 
+		if [ "$(ls -A "$NOVEDADES")" ] 
 		then	
 			validarNombreTipo
 		fi
 
-		if [ "$(ls -A "$ACEPTADOS_PATH")" ] 
+		if [ "$(ls -A "$ACEPTADOS")" ] 
 		then	
 			validarTrailer
 		fi
 
-		if [ "$(ls -A "$ACEPTADOS_PATH")" ] 
-		then	
+		if [ "$(ls -A "$ACEPTADOS")" ] 
+		then
+			
 			generarArchivos
+			echo "fin"	
 		fi
 		sleep 1m
 	done
