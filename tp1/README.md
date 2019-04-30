@@ -22,17 +22,20 @@ Click en [download/grupo03.tgz](download/grupo03.tgz) para descargar la última 
 
 ### Descomprimir
 
+Una vez descargado el archivo tgz se deberá descomprimir el instalador. Para eso posicionarse desde la terminal en la carpeta donde se descargo el archivo y ejecutar el siguiente comando.
+
     $ tar -xzf grupo03.tgz
 
-Para descomprimir en una subcarpeta
+En el caso se que quiera descomprimir en una subcarpeta, debera ejecutar los comandos que colocamos a continuación.
 
     $ mkdir subcarpeta
     $ tar -xzf grupo03.tgz -C subcarpeta
 
 ## Ejecución
-Para ejecutar el proceso desde cero se debe correr:
+Para ejecutar el proceso de instalación desde cero se debe ejecutar el siguiente comando:
 
     $ ./instalador.sh
+   
     $ . ./$ejecutables/inicializacion.sh
 
 
