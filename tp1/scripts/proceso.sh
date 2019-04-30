@@ -7,7 +7,7 @@ sucursales="$maestros/Sucursales.txt"
 log () 
 {
 	echo "$1 $2"
-	date +"-$USER-$1-$2-$3" >> "$LOG/proceso.log" 
+	date +"-$USER-$1-$2-$3" >> "$log/proceso.log" 
 }
 
 validarNombreTipo()
@@ -177,7 +177,7 @@ generarArchivos()
 		
 		done < "$f"
 	  
-	 mv "$f" $procesados
+	 mv "$f" "$procesados"
 
 	done
 }
