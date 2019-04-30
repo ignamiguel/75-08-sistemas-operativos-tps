@@ -36,7 +36,6 @@ write_to_log "INF" "Inicia el comando start.sh."
 # Me fijo si ya existe el proceso
 proceso=$(ps -A -o args ww | grep '.*[ /]proceso.sh$')
 if [ ! -z "$proceso" ]; then
-    echo "$proceso"
     write_to_log "ERR" "No se inicia el proceso dado que ya está en ejecución."
     exit 1
 fi

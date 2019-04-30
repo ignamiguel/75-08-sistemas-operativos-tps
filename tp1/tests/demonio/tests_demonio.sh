@@ -483,3 +483,267 @@ fi
 
 # 6) Vuelvo al directorio original
 cd ../../
+
+
+
+# ---------------------------------------------------------------------
+# Test 11
+# ---------------------------------------------------------------------
+# Pruebas 93 de la cátedra.
+# ---------------------------------------------------------------------
+
+# 1) Ambiente nuevo.
+tests/crear_ambiente.sh
+cd tests/ambiente_de_testing
+
+# 2) Instalo con un camino feliz. Tiro el stdout porque no me interesa
+./instalador.sh < ../demonio/instalacion_feliz.txt > /dev/null
+
+# 4) Copio Entregas_13.txt para que ya esté una vez arranque el demonio
+cp ../demonio/{Entergas_01,Entregas\ 01,Entregas_001,Entregas_00,Entregas-01}.txt novedades
+
+# 3) Inicializo
+(
+    . scripts/inicializacion.sh
+) > /dev/null
+
+# 5) Como es asincrónico le doy un tiempo al demonio para que procese el archivo
+sleep $delay_para_procesar
+
+# 4) Valido la salida
+validacion=$(grep -c '.*es un nombre incorrecto\. ha sido movido a rechazados.*' conf/log/proceso.log)
+if [ $validacion -eq 4 ]; then
+    printTestOk "Test 11, validación 1."
+else
+    1>&2 printTestError "Test 11, validación 1."
+fi
+
+validacion=$(grep -c '.*Entregas_00.txt ha sido movido a aceptados.*' conf/log/proceso.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 11, validación 2."
+else
+    1>&2 printTestError "Test 11, validación 2."
+fi
+
+# 5) Finalizo el proceso
+(
+    . scripts/inicializacion.sh
+    scripts/stop.sh
+) > /dev/null 2> /dev/null
+
+# 6) Vuelvo al directorio original
+cd ../../
+
+
+
+# ---------------------------------------------------------------------
+# Test 12
+# ---------------------------------------------------------------------
+# Pruebas 94 de la cátedra.
+# ---------------------------------------------------------------------
+
+# 1) Ambiente nuevo.
+tests/crear_ambiente.sh
+cd tests/ambiente_de_testing
+
+# 2) Instalo con un camino feliz. Tiro el stdout porque no me interesa
+./instalador.sh < ../demonio/instalacion_feliz.txt > /dev/null
+
+# 4) Copio Entregas_13.txt para que ya esté una vez arranque el demonio
+cp ../demonio/{Entregas_02.txt,Entregas_03.pdf} novedades
+
+# 3) Inicializo
+(
+    . scripts/inicializacion.sh
+) > /dev/null
+
+# 5) Como es asincrónico le doy un tiempo al demonio para que procese el archivo
+sleep $delay_para_procesar
+
+# 4) Valido la salida
+validacion=$(grep -c '.*Entregas_02.txt está vacio\. Ha sido movido a rechazados.*' conf/log/proceso.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 12, validación 1."
+else
+    1>&2 printTestError "Test 12, validación 1."
+fi
+
+validacion=$(grep -c '.*Entregas_03.pdf es un nombre incorrecto\. ha sido movido a rechazados.*' conf/log/proceso.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 12, validación 2."
+else
+    1>&2 printTestError "Test 12, validación 2."
+fi
+
+# 5) Finalizo el proceso
+(
+    . scripts/inicializacion.sh
+    scripts/stop.sh
+) > /dev/null 2> /dev/null
+
+# 6) Vuelvo al directorio original
+cd ../../
+
+
+
+# ---------------------------------------------------------------------
+# Test 13
+# ---------------------------------------------------------------------
+# Pruebas 95 de la cátedra.
+# ---------------------------------------------------------------------
+
+# 1) Ambiente nuevo.
+tests/crear_ambiente.sh
+cd tests/ambiente_de_testing
+
+# 2) Instalo con un camino feliz. Tiro el stdout porque no me interesa
+./instalador.sh < ../demonio/instalacion_feliz.txt > /dev/null
+
+# 4) Copio Entregas_13.txt para que ya esté una vez arranque el demonio
+cp ../demonio/Entregas_0{4,5,6}.txt novedades
+
+# 3) Inicializo
+(
+    . scripts/inicializacion.sh
+) > /dev/null
+
+# 5) Como es asincrónico le doy un tiempo al demonio para que procese el archivo
+sleep $delay_para_procesar
+
+# 4) Valido la salida
+validacion=$(grep -c '.*es incorrecto. Ha sido movido a rechazados.*' conf/log/proceso.log)
+if [ $validacion -eq 3 ]; then
+    printTestOk "Test 13."
+else
+    1>&2 printTestError "Test 13."
+fi
+
+# 5) Finalizo el proceso
+(
+    . scripts/inicializacion.sh
+    scripts/stop.sh
+) > /dev/null 2> /dev/null
+
+# 6) Vuelvo al directorio original
+cd ../../
+
+
+
+# ---------------------------------------------------------------------
+# Test 14
+# ---------------------------------------------------------------------
+# Pruebas 96 de la cátedra.
+# ---------------------------------------------------------------------
+
+# 1) Ambiente nuevo.
+tests/crear_ambiente.sh
+cd tests/ambiente_de_testing
+
+# 2) Instalo con un camino feliz. Tiro el stdout porque no me interesa
+./instalador.sh < ../demonio/instalacion_feliz.txt > /dev/null
+
+# 4) Copio Entregas_14.txt para que ya esté una vez arranque el demonio
+cp ../demonio/Entregas_4{0,1,2,3}.txt novedades
+
+# 3) Inicializo
+(
+    . scripts/inicializacion.sh
+) > /dev/null
+
+# 5) Como es asincrónico le doy un tiempo al demonio para que procese el archivo
+sleep $delay_para_procesar
+
+# 4) Valido la salida
+validacion=$(grep -c '.*PEP no se encuentra en el archivo de operadores.*' conf/log/proceso.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 14, validación 1."
+else
+    1>&2 printTestError "Test 14, validación 1."
+fi
+
+validacion=$(grep -c '.*El operador .* no se encuentra vigente.*' conf/log/proceso.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 14, validación 2."
+else
+    1>&2 printTestError "Test 14, validación 2."
+fi
+
+validacion=$(grep -c '.*No se encontró la sucursal.*' conf/log/proceso.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 14, validación 3."
+else
+    1>&2 printTestError "Test 14, validación 3."
+fi
+
+validacion=$(grep -c '.*Entregas_43.txt no está en el formato adecuado. Ha sido movido a rechazados\..*' conf/log/proceso.log)
+if [ $validacion -eq 1 ]; then
+    printTestOk "Test 14, validación 4."
+else
+    1>&2 printTestError "Test 14, validación 4."
+fi
+
+# 5) Finalizo el proceso
+(
+    . scripts/inicializacion.sh
+    scripts/stop.sh
+) > /dev/null 2> /dev/null
+
+# 6) Vuelvo al directorio original
+cd ../../
+
+
+
+# ---------------------------------------------------------------------
+# Test 15
+# ---------------------------------------------------------------------
+# Procesar Entregas dos veces. Test de la cátedra 100.
+# ---------------------------------------------------------------------
+
+# 1) Ambiente nuevo.
+tests/crear_ambiente.sh
+cd tests/ambiente_de_testing
+
+# 2) Instalo con un camino feliz. Tiro el stdout porque no me interesa
+./instalador.sh < ../demonio/instalacion_feliz.txt > /dev/null
+
+# 4) Copio las entregas para que ya esté una vez arranque el demonio
+cp ../demonio/Entregas_{07,08,09,10,11}.txt novedades
+
+# 3) Inicializo
+(
+    . scripts/inicializacion.sh
+) > /dev/null
+
+# 4) Como es asincrónico le doy un tiempo al demonio para que procese el archivo
+sleep $delay_para_procesar
+
+# 5) Valido la salida
+validacion=$(grep -c '.*ha sido movido a aceptados.*' conf/log/proceso.log)
+if [ $validacion -eq 5 ]; then
+    printTestOk "Test 15, validación 1"
+else
+    1>&2 printTestError "Test 15, validación 1"
+fi
+
+# 6) Copio las entregas otra vez
+cp ../demonio/Entregas_{07,08,09,10,11}.txt novedades
+
+# 7) Espero a que el demonio se despierte devuelta
+sleep 62
+
+# 8) Valido la salida
+validacion=$(grep -c '.*Entregas_[0-9][0-9].txt fue procesado con anterioridad\. Ha sido movido a rechazados.*' conf/log/proceso.log)
+if [ $validacion -eq 5 ]; then
+    printTestOk "Test 15, validación 2"
+else
+    1>&2 printTestError "Test 15, validación 2"
+fi
+
+# 9) Finalizo el proceso
+(
+    . scripts/inicializacion.sh
+    scripts/stop.sh
+) > /dev/null 2> /dev/null
+
+# 10) Vuelvo al directorio original
+cd ../../

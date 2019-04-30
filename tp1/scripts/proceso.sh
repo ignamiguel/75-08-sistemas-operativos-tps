@@ -63,9 +63,20 @@ validarTrailer()
 	  lineas=-1 
 	  trailer_cp=0
 	  lineas_no_en_blanco=-1
+		mal_formato=false
 
 	  while IFS=',' read -r  operador pieza nombre tipo_documento numero_documento codigo_postal;
 	  do
+		
+		if [ $lineas -eq -1 ] && [ "$operador" != "Operador" ]; then
+			# El archivo no está en el formato adecuado
+			# echo $operador
+			log "validarTrailer" "INF" "El archivo $f no está en el formato adecuado. Ha sido movido a rechazados."
+			mv "$f" "$rechazados"
+			mal_formato=true
+			break
+		fi
+
 		let "lineas=lineas + 1"
 			if [ $lineas != 0 ] && [ ! -z "$codigo_postal" ]; then
 				# salteo el encabezado y las líneas en blanco
@@ -76,14 +87,16 @@ validarTrailer()
 			fi
 		done < "$f"
 	  
-	  let "cp_total=cp_total -trailer_cp" 
-	  if [ $lineas_no_en_blanco -eq $cantidad_lineas ] && [ $cp_total -eq $trailer_cp ]
-	  then
-		log "validarTrailer" "INF" "El trailer de $f es correcto."
-	  else
-		log "validarTrailer" "INF" "El trailer de $f es incorrecto. Ha sido movido a rechazados"
-		mv "$f" "$rechazados"
-	  fi
+		if ! $mal_formato; then
+			let "cp_total=cp_total -trailer_cp" 
+			if [ $lineas_no_en_blanco -eq $cantidad_lineas ] && [ $cp_total -eq $trailer_cp ]
+			then
+			log "validarTrailer" "INF" "El trailer de $f es correcto."
+			else
+			log "validarTrailer" "INF" "El trailer de $f es incorrecto. Ha sido movido a rechazados"
+			mv "$f" "$rechazados"
+			fi
+		fi
 	done
 }
 
@@ -95,8 +108,8 @@ generarArchivos()
 	  while IFS=',' read -r  operador pieza nombre tipo_documento numero_documento codigo_postal;
 	  do
 		
-		if $cabezera ; then
-			# Es la primera línea y contiene la cabezera
+		if $cabezera || [ -z "$pieza" ]; then
+			# Es la primera línea y contiene la cabezera o está vacía
 			cabezera=false
 			continue
 		fi
@@ -120,21 +133,36 @@ generarArchivos()
 		
 		
 		
-		
      	if [ $bool == 1 ]
         then
           	bool=0
+						cabezera=true
             while IFS=',' read -r codigo_operacion nombre_operador cuit fecha_inicio fecha_final;
                 do
-                final=$(echo "$fecha_final" | cut -d'/' -f2)	
-                inicio=$(echo "$fecha_inicio" | cut -d'/' -f2)
-               	actual=$(date +"%m")
-               	if [ "$operador" == "$codigo_operacion" ] && [ $final -ge $actual ] && [ $inicio -le $actual ]
-                then
-                	
-                	log "generarArchivos" "INF" "el operador: $operador se encuentra en operadores, inicio: $inicio fin: $final"
-                	bool=1
-                	break;
+
+								if $cabezera ; then
+									# Es la primera línea y contiene la cabezera
+									cabezera=false
+									continue
+								fi
+
+								# Paso las fechas a segundo spara comparar
+								fecha_final_en_seg=$(echo "$fecha_final" | sed "s-\([0-9]\{2\}\)/\([0-9]\{2\}\)/\([0-9]\{4\}\)-\2/\1/\3-" | date -f - +%s)
+								fecha_inicio_en_seg=$(echo "$fecha_inicio" | sed "s-\([0-9]\{2\}\)/\([0-9]\{2\}\)/\([0-9]\{4\}\)-\2/\1/\3-" | date -f - +%s)
+               	actual_en_seg=$(date +"%s")
+								
+								if [ "$operador" == "$codigo_operacion" ]; then
+									# Encontramos el operador
+								  if [ $fecha_final_en_seg -ge $actual_en_seg ] && [ $fecha_inicio_en_seg -le $actual_en_seg ]; then
+										# El operador está vigente
+										log "generarArchivos" "INF" "el operador: $operador se encuentra en operadores, inicio: $fecha_inicio fin: $fecha_final"
+										bool=1
+									else
+										# El operador no está vigente
+										log "generarArchivos" "INF" "el operador: $operador se encuentra en operadores, pero no está vigente: inicio: $fecha_inicio fin: $fecha_final"
+										mensaje_log="El operador $operador no se encuentra vigente."
+									fi
+									break;
                 fi
                 done < "$operadores"
         fi
@@ -143,16 +171,29 @@ generarArchivos()
         if [ $bool == 1 ]
         then
             bool=0
+						cabezera=true
+						sucursal_encontrada=false
             while IFS=',' read -r suc_cod nom_suc dom loc pro cod_pos cod_operador precio;
             do
+							if $cabezera ; then
+								# Es la primera línea y contiene la cabezera
+								cabezera=false
+								continue
+							fi
+
                 if [ "$operador" == "$cod_operador" ] && [ "$codigo_postal" == "$cod_pos" ]
-                    then
-                       
-                        log "generarArchivos" "INF" "Se encontraro al operador: $operador y codigo: $codigo_postal en sucursales"
-                        bool=1
-                        break;
-                    fi
-                    done < "$sucursales"
+									then
+									log "generarArchivos" "INF" "Se encontraro al operador: $operador y codigo: $codigo_postal en sucursales"
+									bool=1
+									sucursal_encontrada=true
+									break;
+								fi
+						done < "$sucursales"
+						
+						# Me fijo si encontré la sucursal
+						if ! $sucursal_encontrada ; then
+							mensaje_log="No se encontró la sucursal con código postal $codigo_postal y operador $operador."
+						fi
         fi
 
 		printf -v pieza '%015d' $pieza
