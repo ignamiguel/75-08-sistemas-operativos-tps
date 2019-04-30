@@ -11,3 +11,6 @@ tests/start/tests_start.sh
 
 # Stop
 tests/stop/tests_stop.sh
+
+# Stop
+tests/demonio/tests_demonio.sh

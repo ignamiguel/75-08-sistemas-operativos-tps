@@ -1,0 +1,8 @@
+scripts
+maestros
+novedades
+aceptados
+rechazados
+procesados
+salida
+s
