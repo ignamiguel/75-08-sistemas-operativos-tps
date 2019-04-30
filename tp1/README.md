@@ -33,8 +33,7 @@ Para descomprimir en una subcarpeta
 Para ejecutar el proceso desde cero se debe correr:
 
     $ ./instalador.sh
-    $ ./$DIRECTORIO_EJECUTABLES/inicializacion.sh
-    $ ./$DIRECTORIO_EJECUTABLES/start.sh
+    $ . ./$ejecutables/inicializacion.sh
 
 
 ## Generación
