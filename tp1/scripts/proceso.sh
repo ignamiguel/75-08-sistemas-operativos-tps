@@ -25,7 +25,12 @@ validarNombreTipo()
 	
 	for f in "$novedades"/*
 	do
-		echo "$f"
+
+		if echo "$f" | grep -c ".*\/\*" ; then
+			# No hay ningún archivo en el directorio novedades
+			continue
+		fi
+
 		if [ -f "$procesados/$(basename "$f")" ] 
 		then
 			log "validarNombreTipo" "INF" "validarNombreTipo" "$f fue procesado con anterioridad. ha sido movido a rechazados"
