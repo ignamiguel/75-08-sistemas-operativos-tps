@@ -33,7 +33,7 @@ function write_to_log(){
 write_to_log "INF" "Inicia el comando stop.sh."
 
 # Me fijo se existe el proceso y guardo su pid
-pid=$(ps -A -o pid,args ww | grep '.*demonio.sh$' | sed 's/^ *\([0-9]*\) .*/\1/')
+pid=$(ps -A -o pid,args ww | grep '.*proceso.sh$' | sed 's/^ *\([0-9]*\) .*/\1/')
 if [ -z "$pid" ]; then
     write_to_log "ERR" "El proceso no se encuentra en ejecución."
     exit 1

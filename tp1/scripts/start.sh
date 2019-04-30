@@ -34,7 +34,7 @@ function write_to_log(){
 write_to_log "INF" "Inicia el comando start.sh."
 
 # Me fijo si ya existe el proceso
-proceso=$(ps -A -o args ww | grep '.*[ /]demonio.sh$')
+proceso=$(ps -A -o args ww | grep '.*[ /]proceso.sh$')
 if [ ! -z "$proceso" ]; then
     echo "$proceso"
     write_to_log "ERR" "No se inicia el proceso dado que ya está en ejecución."
@@ -50,9 +50,9 @@ fi
 
 write_to_log "INF" "El sistema está inicializado. Se procederá a iniciar el proceso."
 
-# "$ejecutables/demonio.sh"
+# "$ejecutables/proceso.sh"
 
-"$ejecutables/demonio.sh" &
+"$ejecutables/proceso.sh" &
 
 write_to_log "INF" "Se inició el proceso con el pid $!."
 exit 0
