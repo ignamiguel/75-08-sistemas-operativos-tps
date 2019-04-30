@@ -70,7 +70,7 @@ validarTrailer()
 		let "cp_total=cp_total + codigo_postal"
 		trailer_cp=$codigo_postal
 		cantidad_lineas=$numero_documento
-	done < $f
+	   done < $f
 	  
 	  let "cp_total=cp_total -trailer_cp" 
 	  if [ $lineas -eq $cantidad_lineas ] && [ $cp_total -eq $trailer_cp ];
@@ -90,23 +90,30 @@ generarArchivos()
 	  while IFS=',' read -r  operador pieza nombre tipo_documento numero_documento codigo_postal;
 	  do
 		
-		bool=1	
-
-		if  ! ( grep -q $operador"\|$codigo_postal" "$SUCURSALES" ) ;
-		then
-			mensaje_log="La dupla Operador: $operador y Codigo Postal: $codigo_postal no existe en sucursales"
-			bool=0
+		bool=1 
 		
-		elif ! ( grep -q $operador "$OPERADORES" ) ;
+		if  ! ( grep -q $operador "$OPERADORES" );
 		then
 			mensaje_log="operador: $operador no se encuentra en el archivo de operadores"
+			
 			bool=0
 		fi
+
+		if  ! ( grep -q $operador "$SUCURSALES" );  
+		then 
+			if ! (grep -q $codigo_postal "$SUCURSALES" ) ;
+			then
+				mensaje_log="Operador y Codigo Postal invalidos"
+				
+				bool=0
+				fi
+		fi
+
 		
 		
 		
-                
-        if [ $bool == 1 ]
+		
+     	if [ $bool == 1 ]
         then
           	bool=0
             while IFS=',' read -r codigo_operacion nombre_operador cuit fecha_inicio fecha_final;
@@ -127,9 +134,9 @@ generarArchivos()
         if [ $bool == 1 ]
         then
             bool=0
-            while IFS=',' read -r s_cod_suc s_nom_suc s_dom s_loc s_pro s_cod_pos s_cod_op s_precio;
+            while IFS=',' read -r suc_cod nom_suc dom loc pro cod_pos cod_operador precio;
             do
-                if [ "$operador" == "$s_cod_op" ] && [ "$codigo_postal" == "$s_cod_pos" ]
+                if [ "$operador" == "$cod_operador" ] && [ "$codigo_postal" == "$cod_pos" ]
                     then
                         bool=1
                         log "Se encontro dupla $operador-$codigo_postal en sucursales.txt"
@@ -146,13 +153,13 @@ generarArchivos()
 		printf -v cod_destino '%3s' $cod_destino
 		
 		suc_destino=$(awk -v codigo=$codigo_postal -F "," '{ if($6 == codigo) {print $2 } }' "$SUCURSALES")
-		printf -v suc_destino '%25s' "$suc_destino"
+		printf -v suc_destino '%20s' "$suc_destino"
 	    
 	    direccion_suc_destino=$(awk -v codigo=$codigo_postal -F "," '{if($6 == codigo) {print $3 } }' "$SUCURSALES")
 		
-		printf -v direccion_suc_destino '%25s' "$direccion_suc_destino"
+		printf -v direccion_suc_destino '%20s' "$direccion_suc_destino"
 		costo=$(awk -v codigo=$codigo_postal -F "," '{ if($6 == codigo) {print $8 } }' "$SUCURSALES")
-		printf -v costo '%06d' $costo
+		printf -v costo '%02d' $costo
 
 		if (( bool  == 1 ))
 		then
