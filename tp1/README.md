@@ -70,12 +70,30 @@ Para detener con la ejecución se deberá ingresar al directorio donde se instal
 
     $ . ./$ejecutables/stop.sh
     
+### Modo de Ejecución
+
+El sistema estará corriendo desde su inicio (START) constantemente hasta que se corra el proceso de STOP. El mismo estará pendiente de los nuevos archivos que se coloquen en la carpeta de NOVEDADES que fue declarada en el instalador.
+
+Los resultados de cada ejecución pueden ser consultados tanto en el LOG como en las carpetas definidas.
+
+    $ . ./$procesados
+    
+En esta carpeta se ubicarán los archivos colocados en novedades que ya fueron procesados.
+
+    $ . ./$rechazados
+    
+En esta carpeta se ubicarán los archivos colocados en novedades que fueron rechazados por el sistema por algun motivo. El mismo puede ser leido en los logs.
+
+    $ . ./$salidas
+    
+Por último en esta carpeta se ubicarán las salidas de las novedades que lograron ser procesadas efectivamente.
+
 ## Generación
-Para generar el paquete de instalación contenido en el archivo instalable en formato “.tgz”
+Para generar el paquete de instalación contenido en el archivo instalable en formato “.tgz” se debe ubicar en la carpeta donde se clono el siguiente repositorio y ejecutar el siguiente comando.
 
     $ make
 
-El output del make es el archivo `grupo03.tgz`
+El output del make es el archivo `grupo03.tgz` el mismo puede descomprimirse e instalarse como mencionamos más arriba.
 
 ## Logs
 Un log es un registro oficial de eventos durante un periodo de tiempo en particular. 
@@ -92,3 +110,5 @@ Fecha (when)           | Usuario (who) | Proceso (what)   | Mensaje (why & where
 ...
 
 ```
+
+Estos logs se pueden revisar en cualquier momento posterior a la instalación dentro de la carpeta  `. ./CONF/LOG` donde cada proceso tendrá su log correspondiente.
