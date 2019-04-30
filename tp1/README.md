@@ -18,7 +18,7 @@ Para ejecutar los tests
     $ ./run_tests.sh
 
 ## Descargas 
-Click en [download/grupo03.tgz](download/grupo03.tgz) para descargar la última versión del programa.
+Click en [download/grupo03.tgz](https://github.com/ignamiguel/75-08-sistemas-operativos-tps/blob/master/tp1/download/grupo03.tgz?raw=true) para descargar la última versión del programa.
 
 ### Descomprimir
 
