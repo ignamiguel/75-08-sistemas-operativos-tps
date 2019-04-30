@@ -31,14 +31,45 @@ En el caso se que quiera descomprimir en una subcarpeta, debera ejecutar los com
     $ mkdir subcarpeta
     $ tar -xzf grupo03.tgz -C subcarpeta
 
-## Ejecución
-Para ejecutar el proceso de instalación desde cero se debe ejecutar el siguiente comando:
+## Instalación
+Para ejecutar el proceso de instalación desde cero, debemos ubicarnos en la carpeta donde se descomprimió el paquete en el punto anterior y se debe ejecutar el siguiente comando:
 
     $ ./instalador.sh
-   
+
+Dentro del proceso de instalación se solicitará los directorios de instalación en los cuales se copiaran los archivos y configuraciones.
+
+![Screenshot](/images/instalador1.png)
+![Screenshot](/images/installador2.png)
+
+Una vez completado este paso, el proyecto se encuentra instalado. Deberá por consola ubicarse en la ruta que definio anteriormente donde se instalaron los ejecutables y ejecutar el comando de inicialización.
+
     $ . ./$ejecutables/inicializacion.sh
 
+Completado este paso el Sistema se encuentra Listo para utilizar.
 
+## Reparar Instalación
+En el caso de que un error haya ocurrido con nuestro sistema, el mismo puede ser reparado y será comunicado al usuario con un mensaje por consola o bien, en los logs que mencionaremos en detalle más abajo.
+
+Para poder correr el instalador en modo reparación, debemos ubicarnos en la carpeta donde se descomprimió el paquete y se debe ejecutar el siguiente comando:
+
+    $ ./instalador.sh -r
+
+De esta forma el sistema se actualizará y quedará listo para usar nuevamente.
+
+## Ejecución
+
+### Start
+
+Para comenzar con la ejecución se deberá ingresar al directorio donde se instalaron los ejecutables y ejecutar el comando Start.
+
+    $ . ./$ejecutables/start.sh
+
+### Stop
+
+Para detener con la ejecución se deberá ingresar al directorio donde se instalaron los ejecutables y ejecutar el comando Stop.
+
+    $ . ./$ejecutables/stop.sh
+    
 ## Generación
 Para generar el paquete de instalación contenido en el archivo instalable en formato “.tgz”
 
