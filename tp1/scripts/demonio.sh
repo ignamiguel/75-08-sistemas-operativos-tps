@@ -28,7 +28,7 @@ validarNombreTipo()
 		echo "$f"
 		if [ -f "$procesados/$(basename "$f")" ] 
 		then
-			log "validarNombreTipo" "validarNombreTipo" "$f fue procesado con anterioridad. ha sido movido a rechazados"
+			log "validarNombreTipo" "INF" "validarNombreTipo" "$f fue procesado con anterioridad. ha sido movido a rechazados"
 			mv "$f" "$rechazados"
 			
 		elif ! [ -s "$f" ] 
@@ -121,13 +121,14 @@ generarArchivos()
           	bool=0
             while IFS=',' read -r codigo_operacion nombre_operador cuit fecha_inicio fecha_final;
                 do
+                final=$(echo "$fecha_final" | cut -d'/' -f2)	
                 inicio=$(echo "$fecha_inicio" | cut -d'/' -f2)
-                final=$(echo "$fecha_final" | cut -d'/' -f2)
-                actual=$(date +"%m")
+               	actual=$(date +"%m")
                	if [ "$operador" == "$codigo_operacion" ] && [ $final -ge $actual ] && [ $inicio -le $actual ]
                 then
+                	
+                	log "generarArchivos" "INF" "el operador: $operador se encuentra en operadores, inicio: $inicio fin: $final"
                 	bool=1
-                	log "el operador: $operador se encuentra en operadores, inicio: $inicio fin: $final"
                 	break;
                 fi
                 done < "$operadores"
@@ -141,8 +142,9 @@ generarArchivos()
             do
                 if [ "$operador" == "$cod_operador" ] && [ "$codigo_postal" == "$cod_pos" ]
                     then
+                       
+                        log "generarArchivos" "INF" "Se encontraro al operador: $operador y codigo: $codigo_postal en sucursales"
                         bool=1
-                        log "Se encontraro al operador: $operador y codigo: $codigo_postal en sucursales"
                         break;
                     fi
                     done < "$sucursales"
@@ -166,10 +168,10 @@ generarArchivos()
 
 		if [ $bool  == 1 ]
 		then
-			log "La pieza fue aceptada: $pieza Operador: $operador Codigo Postal: $codigo_postal"
+			log "generarArchivos" "INF" "La pieza fue aceptada: $pieza Operador: $operador Codigo Postal: $codigo_postal"
 			echo $pieza"$padding"$tipo_documento$numero_documento$codigo_postal"$cod_destino""$suc_destino" "$direc_suc_dest" $costo "$(basename "$f")" >> "$salidas/Entregas_$operador.txt"
 		else
-			log "La Pieza fue rechazada: $pieza Operador: $operador Codigo Postal: $codigo_postal mensaje_log: $mensaje_log"
+			log "generarArchivos" "INF" "La Pieza fue rechazada: $pieza Operador: $operador Codigo Postal: $codigo_postal mensaje_log: $mensaje_log"
 			echo $pieza"$padding"$tipo_documento$numero_documento$codigo_postal"$cod_destino""$suc_destino" "$direc_suc_dest" $costo "$(basename "$f")" >> "$salidas/Entregas_Rechazadas.txt"
 		fi
 		
