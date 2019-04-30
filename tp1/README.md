@@ -124,3 +124,9 @@ Fecha (when)           | Usuario (who) | Proceso (what)   | Mensaje (why & where
 ```
 
 Estos logs se pueden revisar en cualquier momento posterior a la instalación dentro de la carpeta  `. ./CONF/LOG` donde cada proceso tendrá su log correspondiente.
+
+## Pruebas de Ejecución
+
+Dentro de este README pudimos ver los pasos de instalación. Se mencionó en el informe que el instalador guarda una configuración de variables luego de la misma. Aqui mostramos la corrida.
+
+![Screenshot](/images/confinstalacion.png)
