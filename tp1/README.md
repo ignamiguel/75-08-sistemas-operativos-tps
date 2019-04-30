@@ -66,6 +66,8 @@ De esta forma el sistema se actualizará y quedará listo para usar nuevamente.
 
 ## Ejecución
 
+El sistema dispone de dos funciones `START` y `STOP`, las cuales explicaremos brevemente a continuación. Es importante aclarar que si el sistema no se encuentra inicializado como se menciono en el apartado de instalación, el mismo no podrá inciar.
+
 ### Start
 
 Para comenzar con la ejecución se deberá ingresar al directorio donde se instalaron los ejecutables y ejecutar el comando Start.
@@ -77,6 +79,8 @@ Para comenzar con la ejecución se deberá ingresar al directorio donde se insta
 Para detener con la ejecución se deberá ingresar al directorio donde se instalaron los ejecutables y ejecutar el comando Stop.
 
     $ . ./$ejecutables/stop.sh
+    
+Aclaración, no se permitira que el sistema se ejecute más de una vez al mismo tiempo.
     
 ### Modo de Ejecución
 
