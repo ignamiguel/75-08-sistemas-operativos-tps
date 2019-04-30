@@ -6,7 +6,7 @@ sucursales="$maestros/Sucursales.txt"
 
 log () 
 {
-	echo "$1 $2"
+	echo "$1 $2 $3"
 	date +"-$USER-$1-$2-$3" >> "$log/proceso.log" 
 }
 
@@ -26,24 +26,24 @@ validarNombreTipo()
 	for f in "$novedades"/*
 	do
 
-		if echo "$f" | grep -c ".*\/\*" ; then
+		if ( echo "$f" | grep -c ".*\/\*" ) ; then
 			# No hay ningún archivo en el directorio novedades
 			continue
 		fi
 
 		if [ -f "$procesados/$(basename "$f")" ] 
 		then
-			log "validarNombreTipo" "INF" "validarNombreTipo" "$f fue procesado con anterioridad. ha sido movido a rechazados"
+			log "validarNombreTipo" "INF" "$f fue procesado con anterioridad. Ha sido movido a rechazados"
 			mv "$f" "$rechazados"
 			
 		elif ! [ -s "$f" ] 
 		then
-			log "validarNombreTipo" "INF" "$f está vacio. ha sido movido a rechazados"
+			log "validarNombreTipo" "INF" "$f está vacio. Ha sido movido a rechazados"
 			mv "$f" "$rechazados"
 		
 		elif ! [ -f "$f" ] 
 		then
-			log "validarNombreTipo" "INF" "$f no es un archivo regular. ha sido movido a rechazados"
+			log "validarNombreTipo" "INF" "$f no es un archivo regular. Ha sido movido a rechazados"
 			mv "$f" "$rechazados"
 	 	else 
 	 		log "validarNombreTipo" "INF" "$f ha sido movido a aceptados"
@@ -81,7 +81,7 @@ validarTrailer()
 	  then
 		log "validarTrailer" "INF" "El trailer de $f es correcto."
 	  else
-		log "validarTrailer" "INF" "El trailer de $f es incorrecto. ha sido movido a rechazados"
+		log "validarTrailer" "INF" "El trailer de $f es incorrecto. Ha sido movido a rechazados"
 		mv "$f" "$rechazados"
 	  fi
 	done
@@ -194,7 +194,7 @@ main ()
 	do
 		CONTADOR=$((CONTADOR+1))
 		log "ciclo:" "$CONTADOR"
-		echo "ciclo: $CONTADOR"
+		# echo "ciclo: $CONTADOR"
 
 	
 		if [ "$(ls -A "$novedades")" ] 
