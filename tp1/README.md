@@ -32,7 +32,7 @@ En el caso se que quiera descomprimir en una subcarpeta, debera ejecutar los com
     $ tar -xzf grupo03.tgz -C subcarpeta
 
 ## Instalación
-Para ejecutar el proceso de instalación desde cero, debemos ubicarnos en la carpeta donde se descomprimió el paquete en el punto anterior y se debe ejecutar el siguiente comando:
+Para ejecutar el proceso de instalación desde cero, debemos ubicarnos en la carpeta donde se descomprimió el paquete en el punto anterior y ejecutar el siguiente comando:
 
     $ ./instalador.sh
 
