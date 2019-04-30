@@ -22,7 +22,13 @@ Click en [download/grupo03.tgz](download/grupo03.tgz) para descargar la última 
 
 ### Descomprimir
 
-Una vez descargado el archivo tgz se deberá descomprimir el instalador. Para eso posicionarse desde la terminal en la carpeta donde se descargo el archivo y ejecutar el siguiente comando.
+Una vez descargado el archivo tgz se deberá descomprimir el instalador. Para eso posicionarse desde la terminal primero debemos posicionarnos en la carpeta donde se descargo el archivo y luego ejecutar el comando para descomprimir.
+
+Para posicionarse en la carpeta donde descargo el archivo deberá abrir la terminal y colocar:
+
+    $ cd ruta/de/descarga
+
+Luego para descomprimir el sistema:
 
     $ tar -xzf grupo03.tgz
 
@@ -40,6 +46,8 @@ Dentro del proceso de instalación se solicitará los directorios de instalació
 
 ![Screenshot](/images/instalador1.png)
 ![Screenshot](/images/installador2.png)
+
+Como comentario adicional, el sistema dispone de una configuración de carpetas por defecto que se sugiere en cada item del instalador.
 
 Una vez completado este paso, el proyecto se encuentra instalado. Deberá por consola ubicarse en la ruta que definio anteriormente donde se instalaron los ejecutables y ejecutar el comando de inicialización.
 
