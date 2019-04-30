@@ -6,8 +6,8 @@ sucursales="$maestros/Sucursales.txt"
 
 log () 
 {
-	echo "$1 $2 $3"
-	date +"-$USER-$1-$2-$3" >> "$log/proceso.log" 
+	# echo "$1 $2 $3"
+	echo "$(date '+%d/%m/%Y %H:%M:%S')-$USER-$1-$2-$3" >> "$log/proceso.log" 
 }
 
 validarNombreTipo()
@@ -215,10 +215,10 @@ generarArchivos()
 		if [ $bool  == 1 ]
 		then
 			log "generarArchivos" "INF" "La pieza fue aceptada: $pieza Operador: $operador Codigo Postal: $codigo_postal"
-			echo $pieza"$padding"$tipo_documento$numero_documento$codigo_postal"$cod_destino""$suc_destino" "$direc_suc_dest" $costo "$(basename "$f")" >> "$salidas/Entregas_$operador.txt"
+			echo "$pieza$padding$tipo_documento$numero_documento$codigo_postal$cod_destino$suc_destino$direc_suc_dest$costo$(basename $f)" >> "$salidas/Entregas_$operador.txt"
 		else
 			log "generarArchivos" "INF" "La Pieza fue rechazada: $pieza Operador: $operador Codigo Postal: $codigo_postal mensaje_log: $mensaje_log"
-			echo $pieza"$padding"$tipo_documento$numero_documento$codigo_postal"$cod_destino""$suc_destino" "$direc_suc_dest" $costo "$(basename "$f")" >> "$salidas/Entregas_Rechazadas.txt"
+			echo "$operador,$pieza,$nombre,$tipo_documento,$numero_documento,$codigo_postal,$mensaje_log,"$(basename "$f") >> "$salidas/Entregas_Rechazadas.txt"
 		fi
 		
 		done < "$f"
@@ -234,7 +234,7 @@ main ()
 	while true 
 	do
 		CONTADOR=$((CONTADOR+1))
-		log "ciclo:" "$CONTADOR"
+		log "main" "INF" "ciclo: $CONTADOR"
 		# echo "ciclo: $CONTADOR"
 
 	
