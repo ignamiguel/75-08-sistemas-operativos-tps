@@ -16,6 +16,8 @@ En particular, se agrega el archivo [Vagrantfile](../Vagrantfile) para poder cor
 Para ejecutar los tests
 
     $ ./run_tests.sh
+    
+Se agregaron archivos de prueba adicionales que pueden encontrarse en la carpeta [TEST](https://github.com/ignamiguel/75-08-sistemas-operativos-tps/tree/master/tp1/tests) de este repositorio. 
 
 ## Descargas 
 Click en [download/grupo03.tgz](https://github.com/ignamiguel/75-08-sistemas-operativos-tps/blob/master/tp1/download/grupo03.tgz?raw=true) para descargar la última versión del programa.
