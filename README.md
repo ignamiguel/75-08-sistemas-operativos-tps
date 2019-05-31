@@ -3,3 +3,4 @@ El objetivo de este repositorio es almacenar los fuentes y la documentación de 
 
 ## Trabajos Prácticos
 * [Documentación TP 1](tp1/README.md)
+* [Documentación TP 2](tp2/README.md)
