@@ -262,30 +262,30 @@ cd ../../
 # ---------------------------------------------------------------------
 
 # 1) Ambiente nuevo.
-tests/crear_ambiente.sh
-cd tests/ambiente_de_testing
+# tests/crear_ambiente.sh
+# cd tests/ambiente_de_testing
 
-# 2) Instalo con un camino feliz. Tiro el stdout porque no me interesa
-./instalador.sh < ../inicializador/instalacion_feliz.txt > /dev/null
+# # 2) Instalo con un camino feliz. Tiro el stdout porque no me interesa
+# ./instalador.sh < ../inicializador/instalacion_feliz.txt > /dev/null
 
-# 3) Quito el permiso de lectura para Sucursales.txt
-chmod 000 dir_maestros/Sucursales.txt
+# # 3) Quito el permiso de lectura para Sucursales.txt
+# chmod 000 dir_maestros/Sucursales.txt
 
-# 4) Inicializo
-salida=$(. dir_scripts/inicializacion.sh | grep -m 1 'Se corrigen los permisos sobre el archivo maestro .*Sucursales\.txt para poder leerlo')
+# # 4) Inicializo
+# salida=$(. dir_scripts/inicializacion.sh | grep -m 1 'Se corrigen los permisos sobre el archivo maestro .*Sucursales\.txt para poder leerlo')
 
-# 5) Valido la salida
-if [ ! -z "$salida" ] && [ $? -eq 0 ]; then
-    printTestOk "Test 07 del inicializador"
-else
-    1>&2 printTestError "Test 07 del inicializador"
-fi
+# # 5) Valido la salida
+# if [ ! -z "$salida" ] && [ $? -eq 0 ]; then
+#     printTestOk "Test 07 del inicializador"
+# else
+#     1>&2 printTestError "Test 07 del inicializador"
+# fi
 
-# 7) Finalizo el proceso
-(
-    . dir_scripts/inicializacion.sh
-    ./dir_scripts/stop.sh
-) > /dev/null 2> /dev/null
+# # 7) Finalizo el proceso
+# (
+#     . dir_scripts/inicializacion.sh
+#     ./dir_scripts/stop.sh
+# ) > /dev/null 2> /dev/null
 
-# 8) Vuelvo al directorio original
-cd ../../
+# # 8) Vuelvo al directorio original
+# cd ../../
