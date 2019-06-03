@@ -8,10 +8,10 @@ int main(){
 
     portada();
     
-	sv_sem cliente ("cliente",0);
-	cout<<"Semaforo cliente inicializados"<<endl;
-	sv_sem barbero ("barbero",0);
-	cout<<"Semaforo barbero inicializados"<<endl;
+	sv_sem ascensor ("ascensor",0);
+	cout<<"Semaforo ascensor inicializado"<<endl;
+	sv_sem pasajero ("pasajero",0);
+	cout<<"Semaforo pasajero inicializado"<<endl;
     sv_shm area("area");
 	cout<<"Area compartida inicializada"<<endl;
 }

@@ -1,8 +1,8 @@
 LOADLIBES=-pthread #-lrt
 CXXFLAGS=-std=c++11
 
-todos=ascensor pasajero inicializador terminador
-all: {todos}
+todos= inicializador terminador ascensor pasajero
+all: ${todos}
 
 clean:
-	rm -f *~ {todos}
+	rm -f *~ ${todos}

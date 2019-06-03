@@ -1,54 +1,67 @@
-const int Npisos = 10;
-cond_t Petpisos[Npisos], aviso;
-int NpetPiso[Npisos];
-mutex_t ctrlme;
-int piso_actual=1, piso_nuevo=-1, peticiones=0;
+#include  "lib/sv_sem.h"
+#include  "lib/sv_shm.h"
+#include  "Area.h"
+#include  "portada.h"
+using namespace std;
 
-void PulsarBoton(int piso) {
-	lock(ctrlme);
-	signalc(aviso);
-	peticiones = peticiones+1;
-	NpetPiso[piso]++;
-	waitc(Petpisos[piso],ctrlme);
-	NpetPiso[piso]--;
-	unlock(ctrlme);
-};
+int main(){
 
-void EsperarPeticiones() {
-	lock(ctrlme);
-	if (peticiones == 0) {
-		waitc(aviso,ctrlme);
+	//int pisoActual = 0;
+    portada();
+    
+    sv_sem pasajero ("pasajero",0);
+    sv_sem ascensor ("ascensor",0);
+
+ 
+    Area * a;
+    sv_shm area("area");
+    a=reinterpret_cast<Area *> (area.map(BUFSIZ));
+
+    int total_pasajeros = 1;
+
+	cout<<"Ascensor listo"<<endl;
+    while (true){
+
+		ascensor.post();
+		cout<<"Esperando pasajero. Presione enter para continuar.."<<endl;
+		//cin.ignore();
+	    cout<<" "<<endl;
+
+
+	    pasajero.wait();
+	    cout<<"Pasajero Subiendo "<<endl;
+	    //cout<<getPasajero()<<endl;
+		cout<<"Pasajero Bajando. Presione enter para continuar.."<<endl;
+	    cout<<" "<<endl;
+	    //cin.ignore();
+
+		//printEstado(getOrigen(), getDestino());
+
+	    cout<<"Ascensor vacio"<<endl;
+		cout<<"Buscar proximo pasajero? Presione enter para continuar.."<<endl;
+	    cout<<" "<<endl;
+	    //cin.ignore();
+
+	    printf("Pasajeros transportados: %i\n", total_pasajeros);
+	    total_pasajeros = total_pasajeros + 1;
+
+
+    }
+    
+    cout<<"Ultimo pasajero atendido"<<endl;
+    cout<<"Ascensor apagado"<<endl;
+}
+
+/*void printEstado(int subida, int bajada){
+	if (subida < bajada) {
+		for (int i = subida; i <= bajada; i = i + 1) {
+			printf("PISO: %i\n", i);
+		}
+		return;
 	}
-	unlock(ctrlme);
-};
 
-void ElegirMasCercano(int& dist) {
-	int i;
-	boolean sigue;
+	for (int i = subida; i >= bajada; i = i - 1) {
+			printf("PISO: %i\n", i);
+	}
 
-	lock(ctrlme);
-	i= 0; sigue = TRUE;
-	while ((i <= Npisos) && sigue) {
-		if ((piso_actual+i <= Npisos) && (NpetPiso[piso_actual+i]>0)) {
-			piso_nuevo = piso_actual+i;
-			dist = i; sigue = FALSE;
-	 	} else if ((piso_actual-i > 0) && (NpetPiso[piso_actual+i]>0)) {
-	 		piso_nuevo = piso_actual -i;
-	 		dist = -i; sigue = FALSE;
-	 	};
-	 		i = i + 1;
-	 	};
-
-		unlock(ctrlme);
-};
-
-void SubirBajar() {
-	lock(ctrlme);
-	while ((NpetPiso[piso_nuevo])>0) {
-		signal(Petpisos[piso_nuevo]);
-		peticiones = peticiones-1;
-	}; 
-
-	piso_actual = piso_nuevo
-	unlock(ctrlme);
-}; 
+}*/
