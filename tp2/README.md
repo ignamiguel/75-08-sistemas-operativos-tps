@@ -11,14 +11,14 @@ Para poder compilar el sistema se debe ejecutar el siguiente comando en la carpe
 
     $ make all
     
-![Screenshot](/images/make_all.png)
+![Screenshot](images/make_all.png)
 
 ## Limpiar Solución
 Para poder limpiar la solución se debe ejecutar el siguiente comando en la carpeta donde se descargo el codigo fuente.
 
     $ make clean
     
-![Screenshot](/images/make_clean.png)
+![Screenshot](images/make_clean.png)
 
 # Ejecución
 
