@@ -21,7 +21,7 @@ int main(int argc, char * argv[]){
 	a=reinterpret_cast<Area *> (area.map(BUFSIZ));
     
 	cout<<argv[1]<<" esta esperando el ascensor, presione enter para continuar.."<<endl;
-    pasajero.post();
+    
 
     cout<<argv[1]<<" esperando el ascensor"<<endl;
     ascensor.wait();
@@ -30,6 +30,8 @@ int main(int argc, char * argv[]){
    	a->setPisoSubida(argv[2]);
     a->setPisoBajada(argv[3]);
 
-    cout<<"Ascensor listo, ingresa "<<argv[1]<<endl;
+    cout<<"Ascensor listo, presione * para ingresar "<<argv[1]<<endl;
+    cin.ignore();
+    pasajero.post();
 
 }

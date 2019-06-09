@@ -2,6 +2,7 @@
 #include  "lib/sv_shm.h"
 #include  "Area.h"
 #include  "portada.h"
+#include <time.h>
 using namespace std;
 
 int main(){
@@ -22,15 +23,17 @@ int main(){
 	cout<<"Ascensor listo"<<endl;
     while (true){
 
+
 		ascensor.post();
 		cout<<"Esperando pasajero."<<endl;
 	    cout<<" "<<endl;
 
 	    pasajero.wait();
-	    cout<<a->getPasajero()<<", Pasajero Subiendo "<<endl;
+	    time_t my_time = time(NULL);
+	    cout<<ctime(&my_time)<<a->getPasajero()<<", Pasajero Subiendo "<<endl;
 
 	    printEstado(a->getPisoSubida(), a->getPisoBajada());
-
+	    
 		cout<<a->getPasajero()<<", Pasajero Bajando"<<endl;
 	    cout<<" "<<endl;
 
