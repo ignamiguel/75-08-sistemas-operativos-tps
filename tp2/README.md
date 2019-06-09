@@ -34,17 +34,23 @@ Una vez concluida la ejecución, se cuenta con un Terminador que permite limpiar
     
     $./terminador
 
+![Screenshot](images/terminador.gif)
+
 ## Ascensor
 Para poder ejecutar el ascensor, se deberá ejecutar el siguiente comando:
 
     $./ascensor
 
-
 ## Pasajero
 Para poder ejecutar el proceso del pasajero, debe abrir una nueva terminar de forma paralela a la que está ejecutando el ascensor y ejecutar el siguiente comando:
 
     $./pasajero NOMBRE PISO_SUBIDA PISO_BAJADA
-    
+
+## Ejecución
+A continuación una muestra de una ejecución:
+
+![Screenshot](images/ejecucion.gif)
+
 # Descarga
 Puede descargar el archivo fuente clonando el repositorio o bien desde el siguiente [enlace](https://github.com/ignamiguel/75-08-sistemas-operativos-tps/raw/master/tp2/trabajo.zip).
 
