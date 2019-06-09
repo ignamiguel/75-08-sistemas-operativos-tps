@@ -38,4 +38,7 @@ Para poder ejecutar el ascensor, se deberá ejecutar el siguiente comando:
 Para poder ejecutar el proceso del pasajero, debe abrir una nueva terminar de forma paralela a la que está ejecutando el ascensor y ejecutar el siguiente comando:
 
     ./pasajero NOMBRE PISO_SUBIDA PISO_BAJADA
+    
+# Descarga
+Puede descargar el archivo fuente clonando el repositorio o bien desde el siguiente [enlace].
 
