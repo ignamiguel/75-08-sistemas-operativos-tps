@@ -23,24 +23,20 @@ int main(){
     while (true){
 
 		ascensor.post();
-		cout<<"Esperando pasajero. Presione enter para continuar.."<<endl;
-		//cin.ignore();
+		cout<<"Esperando pasajero."<<endl;
 	    cout<<" "<<endl;
-
 
 	    pasajero.wait();
-	    cout<<"Pasajero Subiendo "<<endl;
-	    //cout<<getPasajero()<<endl;
-		cout<<"Pasajero Bajando. Presione enter para continuar.."<<endl;
-	    cout<<" "<<endl;
-	    //cin.ignore();
+	    cout<<a->getPasajero()<<", Pasajero Subiendo "<<endl;
 
-		//printEstado(getOrigen(), getDestino());
+	    printEstado(a->getPisoSubida(), a->getPisoBajada());
+
+		cout<<a->getPasajero()<<", Pasajero Bajando"<<endl;
+	    cout<<" "<<endl;
 
 	    cout<<"Ascensor vacio"<<endl;
 		cout<<"Buscar proximo pasajero? Presione enter para continuar.."<<endl;
-	    cout<<" "<<endl;
-	    //cin.ignore();
+	    cin.ignore();
 
 	    printf("Pasajeros transportados: %i\n", total_pasajeros);
 	    total_pasajeros = total_pasajeros + 1;
@@ -52,16 +48,3 @@ int main(){
     cout<<"Ascensor apagado"<<endl;
 }
 
-/*void printEstado(int subida, int bajada){
-	if (subida < bajada) {
-		for (int i = subida; i <= bajada; i = i + 1) {
-			printf("PISO: %i\n", i);
-		}
-		return;
-	}
-
-	for (int i = subida; i >= bajada; i = i - 1) {
-			printf("PISO: %i\n", i);
-	}
-
-}*/

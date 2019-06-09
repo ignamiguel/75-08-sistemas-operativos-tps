@@ -15,20 +15,21 @@ int main(int argc, char * argv[]){
 
     sv_sem pasajero ("pasajero",0);
     sv_sem ascensor ("ascensor",0);
-  
+
 	Area * a;
 	sv_shm area("area");
 	a=reinterpret_cast<Area *> (area.map(BUFSIZ));
     
 	cout<<argv[1]<<" esta esperando el ascensor, presione enter para continuar.."<<endl;
-    //cin.ignore();
     pasajero.post();
-    
+
     cout<<argv[1]<<" esperando el ascensor"<<endl;
     ascensor.wait();
+    
+    a->setPasajero(argv[1]);
+   	a->setPisoSubida(argv[2]);
+    a->setPisoBajada(argv[3]);
+
     cout<<"Ascensor listo, ingresa "<<argv[1]<<endl;
 
-    if (argc>=4){
-		a->setUltimo();
-    }
 }

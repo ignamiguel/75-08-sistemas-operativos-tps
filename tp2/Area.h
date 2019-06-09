@@ -1,34 +1,31 @@
 #ifndef Area_h
 #define Area_h
 class Area{
-	bool ultimo;
-	char dato [40];
-	char pasajero[10];
-	//char pisoActual;
+	char nombre [40];
+	int subida;
+	int bajada;
 
 	public:
 		Area() {
-			strcpy (dato,"");
-			ultimo=false;
+			strcpy (nombre,"");
+			subida=0;
+			bajada=0;
 			}
-		std::string getDato(){return dato;};
-		void setDato(std::string d){
-		  strcpy (dato,d.c_str());
-		  ultimo=false;
-		}
-		
-		void setUltimo(){ultimo=true;};
-		bool esUltimo(){return ultimo;};
-
-		/*char[10] getPasajero(){
-			return pasajero;
-		}
 
 		void setPasajero(std::string d){
-		  strcpy (pasajero,d.c_str());
-		}*/
+		  strcpy (nombre,d.c_str());
+		}
+		
+		std::string getPasajero(){return nombre;};
 
-		//char getPisoActual(){return pisoActual;};
-		//void setPisoActual(std::char piso){pisoActual=piso}
+		void setPisoSubida(std::string  pisoSubida){
+			subida = std::atoi (pisoSubida.c_str());
+		};
+		int getPisoSubida(){return subida;};
+
+		void setPisoBajada(std::string pisoBajada){
+			bajada = std::atoi (pisoBajada.c_str());
+		};
+		int getPisoBajada(){return bajada;};
 };
 #endif
