@@ -26,6 +26,8 @@ Para poder limpiar la solución se debe ejecutar el siguiente comando en la carp
 Una vez realizada la compilación de los archivos fuentes, se debe realizar la inicialización del sistema. Para ello ejecutar el comando:
 
     $./inicializador
+
+![Screenshot](images/inicializador.gif)
     
 ## Terminador
 Una vez concluida la ejecución, se cuenta con un Terminador que permite limpiar los semaforos y el area compartida. Para ello ejecutar el comando:
