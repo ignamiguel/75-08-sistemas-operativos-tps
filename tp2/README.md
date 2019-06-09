@@ -40,5 +40,5 @@ Para poder ejecutar el proceso del pasajero, debe abrir una nueva terminar de fo
     ./pasajero NOMBRE PISO_SUBIDA PISO_BAJADA
     
 # Descarga
-Puede descargar el archivo fuente clonando el repositorio o bien desde el siguiente [enlace].
+Puede descargar el archivo fuente clonando el repositorio o bien desde el siguiente [enlace](https://github.com/ignamiguel/75-08-sistemas-operativos-tps/raw/master/tp2/trabajo.zip).
 
